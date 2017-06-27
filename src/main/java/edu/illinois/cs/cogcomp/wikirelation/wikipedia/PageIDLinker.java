@@ -93,4 +93,7 @@ public class PageIDLinker {
         return this.title2id.get(title);
     }
 
+    public int getIDCount() {
+        return this.id2title.getSize();
+    }
 }

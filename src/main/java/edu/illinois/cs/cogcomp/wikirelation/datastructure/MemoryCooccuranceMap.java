@@ -34,10 +34,11 @@ public class MemoryCooccuranceMap {
     public void count(Integer pageId1, Integer pageId2) {
         if (pageId1 == null || pageId2 == null) return;
 
-        if (pageId1 < pageId2)
+        if (pageId1 != pageId2) {
             __count(pageId1, pageId2);
-        else if (pageId1 > pageId2)
             __count(pageId2, pageId1);
+        }
+
     }
 
     private void __count(Integer pageId1, Integer pageId2) {

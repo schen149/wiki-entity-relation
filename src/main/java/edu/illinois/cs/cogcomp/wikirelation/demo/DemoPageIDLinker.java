@@ -9,5 +9,7 @@ public class DemoPageIDLinker {
         System.out.println(linker.getTitleFromID(290));
         System.out.println("Getting page id with title = \"Neurodevelopmental_disorder\"...");
         System.out.println(linker.getIDFromTitle("Neurodevelopmental_disorder"));
+        System.out.println("Getting ID count");
+        System.out.println(linker.getIDCount());
     }
 }
