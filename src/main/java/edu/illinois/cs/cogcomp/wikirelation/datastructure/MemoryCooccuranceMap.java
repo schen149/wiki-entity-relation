@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.wikirelation.datastructure;
 
-import java.util.Set;
+import edu.illinois.cs.cogcomp.wikirelation.Util.CacheUtil;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -8,18 +8,22 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MemoryCooccuranceMap {
 
-    public ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Integer>> cache;
+    public ConcurrentHashMap<Long, Short> memCache;
 
     /* ConcurrentMap parameters */
-    private static int LEVEL1_INITIAL_CAPACITY = 5500000;  // Roughly the number of enwiki pages
-    private static float LEVEL1_LOAD_FACTOR = 0.75f;
-    private static int LEVEL1_CONCURRENCY_LEVEL = 32;
-    private static int LEVEL2_INITIAL_CAPACITY = 500;     // Roughly the number of occurance peers of each page
-    private static float LEVEL2_LOAD_FACTOR = 0.75f;
-    private static int LEVEL2_CONCURRENCY_LEVEL = 2;      // Upper bound of number of threads accessing same map
+    private static int TOTAL_CAPACITY = 5500000 * 300; // Roughly the number of enwiki pages * number of href each page
+    private static int INITIAL_CAPACITY;
+    private static float LOAD_FACTOR = 0.75f;
+    private static int CONCURRENCY_LEVEL = 32;
 
-    public MemoryCooccuranceMap(){
-        this.cache = new ConcurrentHashMap<>(LEVEL1_INITIAL_CAPACITY, LEVEL1_LOAD_FACTOR, LEVEL1_CONCURRENCY_LEVEL);
+    private int totalBatches;
+    private int currentBatch;
+
+    public MemoryCooccuranceMap(int totalBatches, int currentBatch){
+        this.totalBatches = totalBatches;
+        this.currentBatch = currentBatch;
+        INITIAL_CAPACITY = TOTAL_CAPACITY / totalBatches;
+        this.memCache = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
     }
 
     /**
@@ -28,31 +32,24 @@ public class MemoryCooccuranceMap {
      * @param pageId2
      * */
     public void count(Integer pageId1, Integer pageId2) {
-        if (pageId1 == null || pageId2 == null) return;
-        __count(pageId1, pageId2);
-        __count(pageId2, pageId1);
+        if (pageId1 < pageId2)
+            __count(pageId1, pageId2);
+        else if (pageId1 > pageId2)
+            __count(pageId2, pageId1);
     }
 
     private void __count(Integer pageId1, Integer pageId2) {
-        if (!cache.containsKey(pageId1)){
-            cache.put(pageId1, new ConcurrentHashMap<>(LEVEL2_INITIAL_CAPACITY, LEVEL2_LOAD_FACTOR, LEVEL2_CONCURRENCY_LEVEL));
-        }
-        ConcurrentHashMap<Integer, Integer> page1map = cache.get(pageId1);
-        if (!page1map.containsKey(pageId2)) {
-            page1map.put(pageId2, 1);
-        }
-        else{
-            page1map.put(pageId2, page1map.get(pageId2) + 1);
+        if (pageId1 == null || pageId2 == null) return;
+
+        long key = CacheUtil.concatTwoIntToLong(pageId1, pageId2);
+
+        if (key % totalBatches == currentBatch) {
+            if (this.memCache.containsKey(key))
+                memCache.put(key, (short) (memCache.get(key) + 1));
+            else
+                memCache.put(key, (short) 1);
         }
     }
 
-    public Set<Integer> keySet(){
-        return this.cache.keySet();
-    }
-
-    public ConcurrentHashMap<Integer, Integer> get(Integer id){
-        if (id == null) return null;
-        return this.cache.get(id);
-    }
 
 }
