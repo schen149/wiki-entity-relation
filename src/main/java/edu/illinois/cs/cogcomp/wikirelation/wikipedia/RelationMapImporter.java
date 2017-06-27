@@ -13,7 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
@@ -41,7 +43,6 @@ public class RelationMapImporter {
         this.language = language;
         this.totalBatches = totalBatches;
         this.idLinker = new PageIDLinker(true);
-        this.relation = new RelationMapLinker(false);
         setPath();
     }
 
@@ -60,28 +61,43 @@ public class RelationMapImporter {
 
             populateDB();
         }
-        closeDB();
     }
 
-    private void parseWikiDump(int currentBatch) throws IOException, SAXException {
+    private void loadCurrentBatch(int currentBatch){
+
+    }
+
+    private void parseWikiDump() throws IOException, SAXException {
         logger.info("Parsing wikidump " + dumpfile);
+        StringBuilder cand_pair = new StringBuilder();
 
         MLWikiDumpFilter filter = new MLWikiDumpFilter(56) {
             @Override
             public void processAnnotation(WikiArticle page, PageMeta meta, TextAnnotation ta) throws Exception {
-                if (page.getTitle().contains("/"))
-                    return;
-
                 if (ta == null || !ta.hasView(ViewNames.WIKIFIER)
                         || meta.isRedirect() || meta.isDisambiguationPage())
                     return;
+
+                if (page.getTitle().contains("/"))
+                    return;
+
                 Integer pageId = Integer.parseInt(page.getId());
 
                 SpanLabelView wikiView = (SpanLabelView) ta.getView(ViewNames.WIKIFIER);
 
                 for (Constituent c : wikiView.getConstituents()) {
                     Integer hrefPageId = idLinker.getIDFromTitle(c.getLabel());
-                    cache.count(pageId, hrefPageId);
+
+                    synchronized (cand_pair) {
+                        cand_pair.append(pageId+"\t"+hrefPageId+"\n");
+
+                        if (cand_pair.length() > 100000) {
+                            BufferedWriter bw1 = new BufferedWriter(new FileWriter(dumpdir+"/cooccurance/cooccurance.txt", true));
+                            bw1.write(cand_pair.toString());
+                            bw1.close();
+                            cand_pair.delete(0, cand_pair.length());
+                        }
+                     }
                 }
             }
         };
@@ -92,6 +108,8 @@ public class RelationMapImporter {
 
     private void populateDB() {
         logger.info("Populating mapdb...");
+
+        this.relation = new RelationMapLinker(false);
 
         List<Map.Entry<Long, Short>> sortedList = new ArrayList<>(this.cache.memCache.entrySet());
 
@@ -125,11 +143,8 @@ public class RelationMapImporter {
                 cands.add(cand);
         }
 
-        logger.info("Finished!");
-    }
-
-    public void closeDB() {
         this.relation.closeDB();
+        logger.info("Finished!");
     }
 
     private static int[] sortKeyByValue(Map<Integer, Integer> map) {
@@ -147,7 +162,8 @@ public class RelationMapImporter {
                 "20170601", "en", 5);
 
         try{
-            rmg.batchProcess();
+//            rmg.batchProcess();
+            rmg.parseWikiDump();
         }
         catch (Exception e) {
             logger.info("Error reading wikipedia dump at /media/evo/data/wiki/enwiki-20170601/");
