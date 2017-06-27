@@ -39,6 +39,7 @@ public class RelationMapImporter {
         this.language = language;
         this.cache = new MemoryCooccuranceMap();
         this.idLinker = new PageIDLinker(true);
+        this.relation = new RelationMapLinker(false);
         setPath();
     }
 
@@ -75,23 +76,16 @@ public class RelationMapImporter {
         MLWikiDumpFilter.parseDump(dumpfile, filter);
     }
 
-    public void populateDB(int threadCount){
+    public void populateDB() {
         logger.info("Populating mapdb...");
-        int count = 0;
-        long startTime = System.currentTimeMillis();
-        for (Integer id: cache.keySet()) {
-            ConcurrentHashMap<Integer, Integer> curPageMap = cache.get(id);
-            relation.put(id, sortKeyByValue(curPageMap));
-            count++;
 
-            if (count % 500 == 0) {
-                long elapsed = System.currentTimeMillis() - startTime;
-                logger.info("Pages Processed: " + count + "\tTime Elapsed: " + elapsed);
-                startTime = System.currentTimeMillis();
-            }
-        }
-        closeDB();
+        this.cache.keySet().parallelStream()
+                .forEach(id -> relation.put(id, sortKeyByValue(this.cache.get(id))));
+
+        logger.info("Finished!");
     }
+
+
 
     public void closeDB() {
         this.relation.closeDB();
@@ -112,7 +106,7 @@ public class RelationMapImporter {
 
         try{
             rmg.parseWikiDump();
-            rmg.populateDB(50);
+            rmg.populateDB();
         }
         catch (Exception e) {
             logger.info("Error reading wikipedia dump at /media/evo/data/wiki/enwiki-20170601/");

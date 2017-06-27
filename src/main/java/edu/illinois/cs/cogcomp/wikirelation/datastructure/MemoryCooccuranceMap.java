@@ -38,7 +38,12 @@ public class MemoryCooccuranceMap {
             cache.put(pageId1, new ConcurrentHashMap<>(LEVEL2_INITIAL_CAPACITY, LEVEL2_LOAD_FACTOR, LEVEL2_CONCURRENCY_LEVEL));
         }
         ConcurrentHashMap<Integer, Integer> page1map = cache.get(pageId1);
-        page1map.put(pageId2, page1map.get(pageId2) + 1);
+        if (!page1map.containsKey(pageId2)) {
+            page1map.put(pageId2, 1);
+        }
+        else{
+            page1map.put(pageId2, page1map.get(pageId2) + 1);
+        }
     }
 
     public Set<Integer> keySet(){
