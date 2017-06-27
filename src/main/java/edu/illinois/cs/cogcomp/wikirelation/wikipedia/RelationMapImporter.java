@@ -57,7 +57,7 @@ public class RelationMapImporter {
             logger.info("Start Processing Batch "+currentBatch+"/"+this.totalBatches);
 
             this.cache = new MemoryCooccuranceMap(totalBatches, currentBatch);
-            parseWikiDump(currentBatch);
+            loadCurrentBatch(currentBatch);
 
             populateDB();
         }
@@ -88,6 +88,7 @@ public class RelationMapImporter {
                 for (Constituent c : wikiView.getConstituents()) {
                     Integer hrefPageId = idLinker.getIDFromTitle(c.getLabel());
 
+                    if (hrefPageId == null) continue;
                     synchronized (cand_pair) {
                         cand_pair.append(pageId+"\t"+hrefPageId+"\n");
 
