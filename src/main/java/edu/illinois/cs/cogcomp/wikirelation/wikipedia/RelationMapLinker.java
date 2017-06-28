@@ -29,7 +29,7 @@ public class RelationMapLinker {
     }
     public RelationMapLinker(boolean bReadOnly, String configFile) {
         this.bReadOnly = bReadOnly;
-        this.idLinker = new PageIDLinker(true);
+        this.idLinker = new PageIDLinker(true, configFile);
 
         // TODO: call this in top level instead of here
         try {
