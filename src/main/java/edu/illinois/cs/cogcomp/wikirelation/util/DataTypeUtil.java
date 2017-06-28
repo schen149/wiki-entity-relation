@@ -1,9 +1,9 @@
-package edu.illinois.cs.cogcomp.wikirelation.Util;
+package edu.illinois.cs.cogcomp.wikirelation.util;
 
 /**
  * Created by squirrel on 6/27/17.
  */
-public class CacheUtil {
+public class DataTypeUtil {
     public static long concatTwoIntToLong(int higher, int lower) {
         return ((long) higher) << 32 | (lower & 0xffffffffL);
     }

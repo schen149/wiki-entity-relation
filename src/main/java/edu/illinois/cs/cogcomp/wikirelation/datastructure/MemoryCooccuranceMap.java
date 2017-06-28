@@ -1,11 +1,12 @@
 package edu.illinois.cs.cogcomp.wikirelation.datastructure;
 
-import edu.illinois.cs.cogcomp.wikirelation.Util.CacheUtil;
+import edu.illinois.cs.cogcomp.wikirelation.util.DataTypeUtil;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A thread-safe map wrapper that act as cache during Relation map import
  */
+@Deprecated
 public class MemoryCooccuranceMap {
 
     public ConcurrentHashMap<Long, Short> memCache;
@@ -43,7 +44,7 @@ public class MemoryCooccuranceMap {
 
     private void __count(Integer pageId1, Integer pageId2) {
         if (pageId1 % totalBatches == currentBatch) {
-            long key = CacheUtil.concatTwoIntToLong(pageId1, pageId2);
+            long key = DataTypeUtil.concatTwoIntToLong(pageId1, pageId2);
 
             if (this.memCache.containsKey(key))
                 memCache.put(key, (short) (memCache.get(key) + 1));

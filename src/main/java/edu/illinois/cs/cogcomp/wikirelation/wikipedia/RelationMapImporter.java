@@ -6,17 +6,13 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.SpanLabelView;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.wiki.parsing.MLWikiDumpFilter;
 import edu.illinois.cs.cogcomp.wiki.parsing.processors.PageMeta;
-import edu.illinois.cs.cogcomp.wikirelation.Util.CacheUtil;
 import edu.illinois.cs.cogcomp.wikirelation.datastructure.MemoryCooccuranceMap;
 import info.bliki.wiki.dump.WikiArticle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 
@@ -29,7 +25,7 @@ public class RelationMapImporter {
     private String dumpdir;
     private String date;
     private String language;
-    private String dumpfile, pagefile, langfile, redirectfile;
+    private String dumpfile, cooccurfile;
 
     private MemoryCooccuranceMap cache;
     private RelationMapLinker relation;
@@ -50,21 +46,7 @@ public class RelationMapImporter {
         if (!(new File(dumpdir).exists()))
             new File(dumpdir).mkdir();
         dumpfile = dumpdir + File.separator + language + "wiki-" + date + "-pages-articles.xml.bz2";
-    }
-
-    public void batchProcess() throws IOException, SAXException {
-        for (int currentBatch = 0; currentBatch < totalBatches; currentBatch++) {
-            logger.info("Start Processing Batch "+currentBatch+"/"+this.totalBatches);
-
-            this.cache = new MemoryCooccuranceMap(totalBatches, currentBatch);
-            loadCurrentBatch(currentBatch);
-
-            populateDB();
-        }
-    }
-
-    private void loadCurrentBatch(int currentBatch){
-
+        cooccurfile = dumpdir + "/cooccurance/cooccurance.txt";
     }
 
     private void parseWikiDump() throws IOException, SAXException {
@@ -93,7 +75,7 @@ public class RelationMapImporter {
                         cand_pair.append(pageId+"\t"+hrefPageId+"\n");
 
                         if (cand_pair.length() > 100000) {
-                            BufferedWriter bw1 = new BufferedWriter(new FileWriter(dumpdir+"/cooccurance/cooccurance.txt", true));
+                            BufferedWriter bw1 = new BufferedWriter(new FileWriter(cooccurfile, true));
                             bw1.write(cand_pair.toString());
                             bw1.close();
                             cand_pair.delete(0, cand_pair.length());
@@ -107,41 +89,26 @@ public class RelationMapImporter {
         MLWikiDumpFilter.parseDump(dumpfile, filter);
     }
 
-    private void populateDB() {
+    private void populateDB() throws IOException{
         logger.info("Populating mapdb...");
 
         this.relation = new RelationMapLinker(false);
 
-        List<Map.Entry<Long, Short>> sortedList = new ArrayList<>(this.cache.memCache.entrySet());
+        BufferedReader br = new BufferedReader(new FileReader(cooccurfile));
+        String line;
+        int count = 0;
+        while ((line = br.readLine()) != null) {
+            String[] ids = line.split("\\t");
+            if (ids.length != 2) continue;
+            Integer pageId1 = Integer.parseInt(ids[0]);
+            Integer pageId2 = Integer.parseInt(ids[1]);
 
-        sortedList.sort(new Comparator<Map.Entry<Long, Short>>() {
-            @Override
-            public int compare(Map.Entry<Long, Short> e1, Map.Entry<Long, Short> e2) {
-                int k1 = CacheUtil.getHigher32bitFromLong(e1.getKey());
-                int k2 = CacheUtil.getHigher32bitFromLong(e2.getKey());
-                if (k1 == k2)
-                    return e2.getValue() - e1.getValue();
-                else
-                    return k1 - k2;
-            }
-        });
+            this.relation.put(pageId1, pageId2);
 
-        int curPage = -1;
-        List<Integer> cands = new ArrayList<>();
-        for (Map.Entry<Long,Short> e: sortedList) {
-            int k = CacheUtil.getHigher32bitFromLong(e.getKey());
-            int cand = CacheUtil.getLower32bitFromLong(e.getKey());
-            if (curPage == -1)
-                curPage = k;
+            count++;
 
-            if (curPage != k) {
-                int[] candsArray = cands.stream().mapToInt(i -> i).toArray();
-                relation.put(curPage, candsArray);
-                curPage = k;
-                cands = new ArrayList<>();
-            }
-            else
-                cands.add(cand);
+            if (count % 10000 == 0)
+                logger.info("Lines processed: " + count);
         }
 
         this.relation.closeDB();
@@ -163,8 +130,8 @@ public class RelationMapImporter {
                 "20170601", "en", 5);
 
         try{
-//            rmg.batchProcess();
-            rmg.parseWikiDump();
+//            rmg.populateDB();
+//            rmg.parseWikiDump();
         }
         catch (Exception e) {
             logger.info("Error reading wikipedia dump at /media/evo/data/wiki/enwiki-20170601/");
