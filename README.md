@@ -1,0 +1,1 @@
+See [`DemoPageIDLinker`](https://github.com/schen149/wiki-entity-relation/blob/master/src/main/java/edu/illinois/cs/cogcomp/wikirelation/demo/DemoPageIDLinker.java) and [`DemoRelationMapLinker`](https://github.com/schen149/wiki-entity-relation/blob/master/src/main/java/edu/illinois/cs/cogcomp/wikirelation/demo/DemoRelationMapLinker.java) classes for example usage.
