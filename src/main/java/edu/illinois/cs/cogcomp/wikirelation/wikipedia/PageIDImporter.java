@@ -21,7 +21,9 @@ public class PageIDImporter {
     public static Wikipedia wiki = null;
     public PageIDLinker titleMap;
 
-    public PageIDImporter() {
+    private String configFile;
+
+    public PageIDImporter(String configFile) {
 
         DatabaseConfiguration dbConfig = new DatabaseConfiguration();
         dbConfig.setHost("localhost");
@@ -35,7 +37,8 @@ public class PageIDImporter {
             e.printStackTrace();
         }
 
-        titleMap = new PageIDLinker(false);
+        this.configFile = configFile;
+        this.titleMap = new PageIDLinker(false, configFile);
     }
 
     public void parse() {
@@ -64,7 +67,12 @@ public class PageIDImporter {
     }
 
     public static void main(String[] args) {
-        PageIDImporter importer = new PageIDImporter();
+        if (args.length != 1) {
+            System.err.println("Usage: java DemoPageIDLinker [config-file-path]");
+            System.exit(1);
+        }
+
+        PageIDImporter importer = new PageIDImporter(args[0]);
         importer.parse();
         importer.closeDB();
     }

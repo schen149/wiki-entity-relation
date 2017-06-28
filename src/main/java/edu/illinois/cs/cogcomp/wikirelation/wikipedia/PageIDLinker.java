@@ -21,15 +21,22 @@ public class PageIDLinker {
     private HTreeMap<String, Integer> title2id;
     private HTreeMap<Integer, String> id2title;
 
+    private static String defaultConfigFile = "config/cogcomp-english-170601.properties";
+
     public PageIDLinker(boolean bReadOnly) {
+        this(bReadOnly, defaultConfigFile);
+    }
+
+    public PageIDLinker(boolean bReadOnly, String configFile) {
         this.bReadOnly = bReadOnly;
 
         // TODO: call this in top level instead of here
         try {
-            Configurator.setPropValues("config/sihaopc-english-170601.properties");
+            Configurator.setPropValues(configFile);
         }
         catch (IOException e) {
-            logger.error("Failed to load config file: config/sihaopc-english-170601.properties");
+            logger.error("Failed to load config file: " + configFile);
+            System.exit(1);
         }
 
         loadDB();

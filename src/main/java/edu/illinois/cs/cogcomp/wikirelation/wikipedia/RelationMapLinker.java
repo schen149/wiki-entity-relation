@@ -12,11 +12,6 @@ import java.util.*;
 
 /**
  * Use Co-occurance metric to measure & cache related wikipedia titles
- * Currently I'm using a unmodifiable structure to store co-occurance map.
- * Performance-wise speaking this is the way to go.
- * But I believe there should be a better solution than this.
- *
- * TODO: think of a better datastructure to store co-occurance map
  */
 public class RelationMapLinker {
 
@@ -24,24 +19,26 @@ public class RelationMapLinker {
 
     private DB db;
     private PageIDLinker idLinker;
-
-    private boolean bReadOnly;
-    private boolean bDBopen;
-
     private BTreeMap<Long, Short> coocuranceCount;
 
+    private boolean bReadOnly;
+    private static String defaultConfigFile = "config/cogcomp-english-170601.properties";
+
     public RelationMapLinker(boolean bReadOnly) {
+        this(bReadOnly, defaultConfigFile);
+    }
+    public RelationMapLinker(boolean bReadOnly, String configFile) {
         this.bReadOnly = bReadOnly;
         this.idLinker = new PageIDLinker(true);
 
         // TODO: call this in top level instead of here
         try {
-            Configurator.setPropValues("config/sihaopc-english-170601.properties");
+            Configurator.setPropValues(configFile);
         }
         catch (IOException e) {
-            logger.error("Failed to load config file: config/sihaopc-english-170601.properties");
+            logger.error("Failed to load config file: " + configFile);
+            System.exit(1);
         }
-
         loadDB();
     }
 
@@ -69,7 +66,6 @@ public class RelationMapLinker {
                     .valueSerializer(Serializer.SHORT)
                     .create();
         }
-        this.bDBopen = true;
     }
 
     public void put(Integer pageId1, Integer pageId2) {
@@ -91,7 +87,6 @@ public class RelationMapLinker {
             db.commit();
             db.close();
         }
-        this.bDBopen = false;
     }
 
     public int[] getRelatedCandidateIds(Integer pageId) {
