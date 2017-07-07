@@ -6,7 +6,6 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.SpanLabelView;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.wiki.parsing.MLWikiDumpFilter;
 import edu.illinois.cs.cogcomp.wiki.parsing.processors.PageMeta;
-import edu.illinois.cs.cogcomp.wikirelation.datastructure.MemoryCooccuranceMap;
 import info.bliki.wiki.dump.WikiArticle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,17 +26,13 @@ public class RelationMapImporter {
     private String language;
     private String dumpfile, cooccurfile;
 
-    private MemoryCooccuranceMap cache;
     private RelationMapLinker relation;
     private PageIDLinker idLinker;
 
-    int totalBatches; // Number of batches it takes
-
-    public RelationMapImporter(String dumpDir, String date, String language, int totalBatches) {
+    public RelationMapImporter(String dumpDir, String date, String language) {
         this.dumpdir = dumpDir;
         this.date = date;
         this.language = language;
-        this.totalBatches = totalBatches;
         this.idLinker = new PageIDLinker(true);
         setPath();
     }
@@ -127,7 +122,7 @@ public class RelationMapImporter {
 
     public static void main(String args[]) {
         RelationMapImporter rmg = new RelationMapImporter("/media/evo/data/wiki/enwiki-20170601/",
-                "20170601", "en", 5);
+                "20170601", "en");
 
         try{
 //            rmg.populateDB();
