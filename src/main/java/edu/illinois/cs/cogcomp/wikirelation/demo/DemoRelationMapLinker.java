@@ -35,5 +35,9 @@ public class DemoRelationMapLinker {
         System.out.println("Getting Related Page titles to \"Champaign,_Illinois\"\n");
         String[] candTitles2 = rml.getRelatedCandidateTitles("Champaign,_Illinois");
         System.out.println(Arrays.toString(candTitles2) + "\n");
+
+        System.out.println("Getting Top 10 Related Page ids to \"Champaign,_Illinois\"" + "\n");
+        int[] candIds3 = rml.getTopKRelatedCandidateIds("Champaign,_Illinois", 0);
+        System.out.println(Arrays.toString(candIds3) + "\n");
     }
 }

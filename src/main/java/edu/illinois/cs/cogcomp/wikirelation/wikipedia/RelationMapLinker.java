@@ -89,15 +89,20 @@ public class RelationMapLinker {
         }
     }
 
+    /**
+     * Get all related wikipedia pages' id
+     * @param pageId page id (curId) of the wikipedia page link
+     * @return array of all page ids related to the input wikipedia page
+     * */
     public int[] getRelatedCandidateIds(Integer pageId) {
         if (pageId == null)
             return new int[]{};
 
         long upperBound = DataTypeUtil.concatTwoIntToLong(pageId+1, 0);
-        long lowerBount = DataTypeUtil.concatTwoIntToLong(pageId, 0);
+        long lowerBound = DataTypeUtil.concatTwoIntToLong(pageId, 0);
 
         // Co-occurance count of the given pageId
-        Map<Long, Short> count = this.coocuranceCount.subMap(lowerBount, upperBound);
+        Map<Long, Short> count = this.coocuranceCount.subMap(lowerBound, upperBound);
         List<Map.Entry<Long, Short>> sortedCount = new ArrayList<>(count.entrySet());
         sortedCount.sort((e1,e2) -> e2.getValue() - e1.getValue());
 
@@ -109,19 +114,78 @@ public class RelationMapLinker {
         return candIds;
     }
 
+    /**
+     * Get all related wikipedia pages' id
+     * @param title page title/link of the wikipedia page link
+     * @return array of all page ids related to the input wikipedia page
+     * */
     public int[] getRelatedCandidateIds(String title) {
         return getRelatedCandidateIds(this.idLinker.getIDFromTitle(title));
     }
 
+    /**
+     * Get all related wikipedia page titles/links
+     * @param pageId page id (curId) of the wikipedia page link
+     * @return array of all page titles/links related to the input wikipedia page
+     * */
     public String[] getRelatedCandidateTitles(Integer pageId) {
+        if (pageId == null)
+            return new String[]{};
+
         int[] candIds = getRelatedCandidateIds(pageId);
         return Arrays.stream(candIds)
                 .mapToObj(c -> idLinker.getTitleFromID(c))
                 .toArray(String[]::new);
     }
 
+    /**
+     * Get all related wikipedia page titles/links
+     * @param title page title/link of the wikipedia page link
+     * @return array of all page titles/links related to the input wikipedia page
+     * */
     public String[] getRelatedCandidateTitles(String title) {
         return getRelatedCandidateTitles(this.idLinker.getIDFromTitle(title));
     }
+
+    /**
+     * Get top k related wikipedia page ids
+     * @param pageId page id (curId) of the wikipedia page link.
+     * @param k number of related candidates
+     * @return array of all page ids related to the input wikipedia page
+     * */
+    public int[] getTopKRelatedCandidateIds(Integer pageId, int k) {
+        return Arrays.copyOfRange(getRelatedCandidateIds(pageId), 0, k);
+    }
+
+    /**
+     * Get top k related wikipedia page ids
+     * @param title page title/link of the wikipedia page link.
+     * @param k number of related candidates
+     * @return array of all page ids related to the input wikipedia page
+     * */
+    public int[] getTopKRelatedCandidateIds(String title, int k) {
+        return Arrays.copyOfRange(getRelatedCandidateIds(title), 0, k);
+    }
+
+    /**
+     * Get top k related wikipedia page titles/links
+     * @param pageId page id (curId) of the wikipedia page link.
+     * @param k number of related candidates
+     * @return array of all page titles/links related to the input wikipedia page
+     * */
+    public String[] getTopKRelatedCandidateTitles(Integer pageId, int k) {
+        return Arrays.copyOfRange(getRelatedCandidateTitles(pageId), 0, k);
+    }
+
+    /**
+     * Get top k related wikipedia page titles/links
+     * @param title page title/link of the wikipedia page link.
+     * @param k number of related candidates
+     * @return array of all page titles/links related to the input wikipedia page
+     * */
+    public String[] getTopKRelatedCandidateTitles(String title, int k) {
+        return Arrays.copyOfRange(getRelatedCandidateTitles(title), 0, k);
+    }
+
 
 }
