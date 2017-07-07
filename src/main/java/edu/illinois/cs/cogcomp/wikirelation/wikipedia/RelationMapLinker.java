@@ -243,7 +243,7 @@ public class RelationMapLinker {
         List<Map.Entry<Integer, Pair<Integer, Integer>>> sortedCands = new ArrayList<>(cands.entrySet());
         sortedCands.sort((c1, c2) -> {
             int relatedPageNum1 = c1.getValue().getFirst();
-            int relatedPageNum2 = c2.getValue().getSecond();
+            int relatedPageNum2 = c2.getValue().getFirst();
             if (relatedPageNum1 != relatedPageNum2)
                 return relatedPageNum2 - relatedPageNum1;
             else
