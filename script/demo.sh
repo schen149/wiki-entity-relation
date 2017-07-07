@@ -6,5 +6,7 @@ if [ "$#" -ne 2 ]; then
 	echo "An example input file is included located at sample-input/ under the project folder"
 exit
 fi
-
-mvn exec:java -Dexec.arguments="-Xmx1g" -Dexec.mainClass=edu.illinois.cs.cogcomp.wikirelation.demo.DemoPageIDLinker -Dexec.args="/shared/experiments/schen149/wiki-entity-relation/config/cogcomp-english-170601.properties $1 $2"
+link=$(readlink -e $1)
+cd "/shared/experiments/schen149/wiki-entity-relation"
+mvn install
+mvn exec:java -Dexec.arguments="-Xmx1g" -Dexec.mainClass=edu.illinois.cs.cogcomp.wikirelation.demo.Demo -Dexec.args="/shared/experiments/schen149/wiki-entity-relation/config/cogcomp-english-170601.properties $link $2"
