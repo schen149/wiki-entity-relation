@@ -48,7 +48,7 @@ public class PageIDLinker {
 
         if (bReadOnly) {
             db = DBMaker.fileDB(dbfile)
-                    .fileChannelEnable()
+                    .fileMmapEnable()
                     .closeOnJvmShutdown()
                     .readOnly()
                     .make();

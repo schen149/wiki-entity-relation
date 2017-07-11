@@ -60,7 +60,7 @@ public class RelationMapLinker {
 
         if (bReadOnly) {
             db = DBMaker.fileDB(dbfile)
-                    .fileChannelEnable()
+                    .fileMmapEnable()
                     .closeOnJvmShutdown()
                     .readOnly()
                     .make();
