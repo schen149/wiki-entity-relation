@@ -234,26 +234,24 @@ public class RelationMapLinker {
                     cands.put(candId, new Pair<>(1, (int) curCand.getValue()));
                 else {
                     Pair<Integer, Integer> oldVal = cands.get(candId);
-                    Pair<Integer, Integer> newVal = new Pair<>(oldVal.getFirst() + 1, oldVal.getSecond() + curCand.getValue());
+                    Pair<Integer, Integer> newVal = new Pair<>(oldVal.getFirst() + 1, Math.max(oldVal.getSecond(),curCand.getValue()));
                     cands.put(candId, newVal);
                 }
             }
         }
-
-        List<Map.Entry<Integer, Pair<Integer, Integer>>> sortedCands = new ArrayList<>(cands.entrySet());
-        sortedCands.sort((c1, c2) -> {
-            int relatedPageNum1 = c1.getValue().getFirst();
-            int relatedPageNum2 = c2.getValue().getFirst();
-            if (relatedPageNum1 != relatedPageNum2)
-                return relatedPageNum2 - relatedPageNum1;
-            else
-                return c2.getValue().getSecond() - c1.getValue().getSecond();
-        });
-
         Set<Integer> inputPageIds = Arrays.stream(pageIds).boxed().collect(Collectors.toSet());
+        List<Map.Entry<Integer, Pair<Integer, Integer>>> sortedCands = new ArrayList<>(cands.entrySet());
 
-        // Get the candidates ids and filter out the ones already in the input
         int[] candIds = sortedCands.stream()
+                .filter(c -> c.getValue().getFirst() == pageIds.length)
+                .sorted((c1, c2) -> {
+                    int relatedPageNum1 = c1.getValue().getFirst();
+                    int relatedPageNum2 = c2.getValue().getFirst();
+                    if (relatedPageNum1 != relatedPageNum2)
+                        return relatedPageNum2 - relatedPageNum1;
+                    else
+                        return c2.getValue().getSecond() - c1.getValue().getSecond();
+                })
                 .mapToInt(Map.Entry::getKey)
                 .filter(c -> !inputPageIds.contains(c))
                 .toArray();
