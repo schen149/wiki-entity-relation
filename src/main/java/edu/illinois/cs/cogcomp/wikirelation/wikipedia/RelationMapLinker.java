@@ -234,13 +234,18 @@ public class RelationMapLinker {
                     cands.put(candId, new Pair<>(1, (int) curCand.getValue()));
                 else {
                     Pair<Integer, Integer> oldVal = cands.get(candId);
-                    Pair<Integer, Integer> newVal = new Pair<>(oldVal.getFirst() + 1, oldVal.getSecond() + curCand.getValue());
+                    Pair<Integer, Integer> newVal = new Pair<>(oldVal.getFirst() + 1, Math.max(oldVal.getSecond(),curCand.getValue()));
                     cands.put(candId, newVal);
                 }
             }
         }
 
         List<Map.Entry<Integer, Pair<Integer, Integer>>> sortedCands = new ArrayList<>(cands.entrySet());
+
+        sortedCands = sortedCands.stream()
+                .filter(c -> c.getValue().getFirst() == pageIds.length)
+                .collect(Collectors.toList());
+
         sortedCands.sort((c1, c2) -> {
             int relatedPageNum1 = c1.getValue().getFirst();
             int relatedPageNum2 = c2.getValue().getFirst();
