@@ -27,9 +27,9 @@ public class Demo {
             while ((line = br.readLine()) != null)
                 titles.add(line.trim());
 
-            String[] candIds = linker.getTopKRelatedCandidateTitles(titles.toArray(new String[titles.size()]), k);
+            String[] candIds = linker.getTopKRelatedNETitles(titles.toArray(new String[titles.size()]), k);
 
-            System.out.println("Retrieving Top " + k + " Related Entities...");
+            System.out.println("Retrieving Top " + k + " Related NE titles...");
             for (String cand: candIds)
                 System.out.println(cand);
         }
