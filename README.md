@@ -7,12 +7,12 @@ Related page titles to **Champaign,_Illinois** and **Urbana,_Illinois**
 Champaign–Urbana_metropolitan_area
 Champaign-Decatur_CSA
 University_of_Illinois_at_Urbana–Champaign
-Champaign_County,_Illinois
 Illinois_Field
 Interstate_57
 Illinois_Route_130
-Illinois
-Champaign_County_YMCA_Heat_Swim_Team_(HEAT)
+Champaign_County,_Illinois
 Interstate_74_in_Illinois
+U.S._Route_45_in_Illinois
+Don_Gerard
 ```
 
