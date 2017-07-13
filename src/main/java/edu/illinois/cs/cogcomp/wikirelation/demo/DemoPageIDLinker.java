@@ -18,8 +18,5 @@ public class DemoPageIDLinker {
         /* Get page id given the title of the page */
         Integer id = linker.getIDFromTitle("Neurodevelopmental_disorder");
         System.out.println("Getting page id with title = \"Neurodevelopmental_disorder\": \t"+id);
-
-
-//        System.out.println("Getting ID count: \t" + linker.getIDCount());
     }
 }

@@ -1,8 +1,10 @@
 package edu.illinois.cs.cogcomp.wikirelation.util;
 
+import edu.illinois.cs.cogcomp.xlwikifier.ConfigParameters;
 import edu.illinois.cs.cogcomp.xlwikifier.freebase.FreeBaseQuery;
 import org.apache.commons.lang.StringUtils;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,6 +24,15 @@ public class WikiUtil {
     }
 
     public static boolean isTitleNEType(String title, String lang){
+        try {
+            if (!ConfigParameters.is_set)
+                ConfigParameters.setPropValues();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
         if (!FreeBaseQuery.isloaded())
             FreeBaseQuery.loadDB(true);
 
