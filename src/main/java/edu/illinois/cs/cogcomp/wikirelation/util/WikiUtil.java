@@ -32,7 +32,7 @@ public class WikiUtil {
             e.printStackTrace();
             System.exit(1);
         }
-        
+
         if (!FreeBaseQuery.isloaded())
             FreeBaseQuery.loadDB(true);
 

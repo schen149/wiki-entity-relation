@@ -1,21 +1,16 @@
 package edu.illinois.cs.cogcomp.wikirelation.wikipedia;
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames;
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.SpanLabelView;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.wiki.parsing.MLWikiDumpFilter;
 import edu.illinois.cs.cogcomp.wiki.parsing.processors.PageMeta;
-import edu.illinois.cs.cogcomp.wikirelation.datastructure.MemoryCooccuranceMap;
 import info.bliki.wiki.dump.WikiArticle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 
 /**
