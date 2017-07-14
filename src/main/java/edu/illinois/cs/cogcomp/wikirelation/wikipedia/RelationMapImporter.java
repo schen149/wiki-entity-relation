@@ -6,6 +6,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.SpanLabelView;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.wiki.parsing.MLWikiDumpFilter;
 import edu.illinois.cs.cogcomp.wiki.parsing.processors.PageMeta;
+import edu.illinois.cs.cogcomp.wikirelation.util.WikiUtil;
 import info.bliki.wiki.dump.WikiArticle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,16 +25,17 @@ public class RelationMapImporter {
     private String dumpdir;
     private String date;
     private String language;
-    private String dumpfile, cooccurfile;
+    private String dumpfile, cooccurfile, configfile;
 
     private RelationMapLinker relation;
     private PageIDLinker idLinker;
 
-    public RelationMapImporter(String dumpDir, String date, String language) {
+    public RelationMapImporter(String dumpDir, String date, String language, String configfile) {
         this.dumpdir = dumpDir;
         this.date = date;
         this.language = language;
-        this.idLinker = new PageIDLinker(true);
+        this.configfile = configfile;
+        this.idLinker = new PageIDLinker(true, configfile);
         setPath();
     }
 
@@ -87,7 +89,7 @@ public class RelationMapImporter {
     private void populateDB() throws IOException{
         logger.info("Populating mapdb...");
 
-        this.relation = new RelationMapLinker(false);
+        this.relation = new RelationMapLinker(false, this.configfile);
 
         BufferedReader br = new BufferedReader(new FileReader(cooccurfile));
         String line;
@@ -98,7 +100,14 @@ public class RelationMapImporter {
             Integer pageId1 = Integer.parseInt(ids[0]);
             Integer pageId2 = Integer.parseInt(ids[1]);
 
-            this.relation.put(pageId1, pageId2);
+            // only record NE titles
+            String title1 = idLinker.getTitleFromID(pageId1);
+            String title2 = idLinker.getTitleFromID(pageId2);
+
+            if (title1 != null && title2 != null
+                    && WikiUtil.isTitleNEType(title1, "en") && WikiUtil.isTitleNEType(title2, "en")) {
+                this.relation.put(pageId1, pageId2);
+            }
 
             count++;
 
@@ -122,10 +131,10 @@ public class RelationMapImporter {
 
     public static void main(String args[]) {
         RelationMapImporter rmg = new RelationMapImporter("/media/evo/data/wiki/enwiki-20170601/",
-                "20170601", "en");
+                "20170601", "en", "/home/squirrel/project/wiki-entity-relation/config/sihaopc-english-170601.properties");
 
         try{
-//            rmg.populateDB();
+            rmg.populateDB();
 //            rmg.parseWikiDump();
         }
         catch (Exception e) {

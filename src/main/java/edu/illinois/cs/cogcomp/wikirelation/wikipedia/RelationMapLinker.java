@@ -56,7 +56,7 @@ public class RelationMapLinker {
 
     private void loadDB(){
 
-        String dbfile = Configurator.MAPDB_PATH + File.separator + "coocurancemap";
+        String dbfile = Configurator.MAPDB_PATH + File.separator + "coocurancemap-ne";
 
         if (bReadOnly) {
             db = DBMaker.fileDB(dbfile)
@@ -140,7 +140,6 @@ public class RelationMapLinker {
         return Arrays.stream(candIds)
                 .mapToObj(c -> idLinker.getTitleFromID(c))
                 .filter(Objects::nonNull)
-                .filter(t -> WikiUtil.isTitleNEType(t, "en"))
                 .toArray(String[]::new);
     }
 
@@ -237,7 +236,6 @@ public class RelationMapLinker {
         String[] allCands = Arrays.stream(getAllRelatedCandidateIds(pageIds))
                 .mapToObj(c -> idLinker.getTitleFromID(c))
                 .filter(Objects::nonNull)
-                .filter(t -> WikiUtil.isTitleNEType(t, "en"))
                 .toArray(String[]::new);
         return Arrays.copyOfRange(allCands,0, k);
     }
@@ -246,7 +244,6 @@ public class RelationMapLinker {
         String[] allCands = Arrays.stream(getAllRelatedCandidateIds(titles))
                 .mapToObj(c -> idLinker.getTitleFromID(c))
                 .filter(Objects::nonNull)
-                .filter(t -> WikiUtil.isTitleNEType(t, "en"))
                 .toArray(String[]::new);
         return Arrays.copyOfRange(allCands,0, k);
     }
