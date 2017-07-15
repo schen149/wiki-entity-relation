@@ -11,9 +11,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Import wikipedia Page title to ID map from JWPL
- *
- * TODO: JWPL is overkill.. I'm using it only because it's faster (given that JWPL is already set up).
- * TODO: A class with similar functionality exists already. See xlwikifier.wikipedia.DumpReader
  */
 public class PageIDImporter {
 

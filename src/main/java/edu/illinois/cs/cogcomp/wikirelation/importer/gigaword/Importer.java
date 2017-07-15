@@ -12,11 +12,14 @@ public class Importer {
         this.recordFilePath = recordFilePath;
     }
 
+    public void populateDB() {
+
+    }
+
     public static Record deserializeRecordFromBytes(byte[] bytes) throws TException {
-        TDeserializer deserializer = new TDeserializer(
-                new TBinaryProtocol.Factory());
-        Record r = new Record();
-        deserializer.deserialize(r, bytes);
-        return r;
+        Record rec = new Record();
+        TDeserializer td = new TDeserializer();
+        td.deserialize(rec, bytes);
+        return rec;
     }
 }
