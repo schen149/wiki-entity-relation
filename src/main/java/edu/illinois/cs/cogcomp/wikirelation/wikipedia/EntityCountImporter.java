@@ -5,6 +5,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.SpanLabelView;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.wiki.parsing.MLWikiDumpFilter;
 import edu.illinois.cs.cogcomp.wiki.parsing.processors.PageMeta;
+import edu.illinois.cs.cogcomp.wikirelation.core.EntityCountLinker;
 import info.bliki.wiki.dump.WikiArticle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

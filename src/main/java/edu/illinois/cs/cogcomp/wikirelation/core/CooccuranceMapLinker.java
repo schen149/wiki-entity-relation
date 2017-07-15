@@ -1,9 +1,8 @@
-package edu.illinois.cs.cogcomp.wikirelation.wikipedia;
+package edu.illinois.cs.cogcomp.wikirelation.core;
 
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.wikirelation.util.DataTypeUtil;
 import edu.illinois.cs.cogcomp.wikirelation.config.Configurator;
-import edu.illinois.cs.cogcomp.wikirelation.util.WikiUtil;
 import org.mapdb.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +23,11 @@ import java.util.stream.Collectors;
  *
  * Theoretical space needed: ~70M * (8B + 4B) * 2 / 0.75 = 2.24 GB (Assume perfect primitive map)
  * Actual Space of output: ~2.7GB
+ *
  */
-public class RelationMapLinker {
+public class CooccuranceMapLinker {
 
-    private static Logger logger = LoggerFactory.getLogger(RelationMapLinker.class);
+    private static Logger logger = LoggerFactory.getLogger(CooccuranceMapLinker.class);
 
     private DB db;
     private PageIDLinker idLinker;
@@ -36,10 +36,10 @@ public class RelationMapLinker {
     private boolean bReadOnly;
     private static String defaultConfigFile = "config/cogcomp-english-170601.properties";
 
-    public RelationMapLinker(boolean bReadOnly) {
+    public CooccuranceMapLinker(boolean bReadOnly) {
         this(bReadOnly, defaultConfigFile);
     }
-    public RelationMapLinker(boolean bReadOnly, String configFile) {
+    public CooccuranceMapLinker(boolean bReadOnly, String configFile) {
         this.bReadOnly = bReadOnly;
         this.idLinker = new PageIDLinker(true, configFile);
 

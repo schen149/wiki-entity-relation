@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.wikirelation.wikipedia;
+package edu.illinois.cs.cogcomp.wikirelation.core;
 
 import edu.illinois.cs.cogcomp.wikirelation.config.Configurator;
 import org.mapdb.*;

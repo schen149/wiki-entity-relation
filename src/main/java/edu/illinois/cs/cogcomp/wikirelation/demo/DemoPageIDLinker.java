@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.wikirelation.demo;
 
-import edu.illinois.cs.cogcomp.wikirelation.wikipedia.PageIDLinker;
+import edu.illinois.cs.cogcomp.wikirelation.core.PageIDLinker;
 
 public class DemoPageIDLinker {
     public static void main(String[] args){

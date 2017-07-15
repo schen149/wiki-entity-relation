@@ -24,10 +24,15 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <cogcompNlpVersion>3.0.87</cogcompNlpVersion>
+        <cogcompNlpVersion>3.1.22</cogcompNlpVersion>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>0.8.0</version>
+        </dependency>
         <dependency>
             <groupId>edu.illinois.cs.cogcomp</groupId>
             <artifactId>xlwikifier</artifactId>
@@ -40,7 +45,12 @@
         </dependency>
         <dependency>
             <groupId>edu.illinois.cs.cogcomp</groupId>
-            <artifactId>illinois-nlp-pipeline</artifactId>
+            <artifactId>illinois-curator</artifactId>
+            <version>${cogcompNlpVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.illinois.cs.cogcomp</groupId>
+            <artifactId>illinois-core-utilities</artifactId>
             <version>${cogcompNlpVersion}</version>
         </dependency>
         <dependency>

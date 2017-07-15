@@ -1,12 +1,12 @@
 package edu.illinois.cs.cogcomp.wikirelation;
 
-import edu.illinois.cs.cogcomp.wikirelation.wikipedia.RelationMapLinker;
+import edu.illinois.cs.cogcomp.wikirelation.core.CooccuranceMapLinker;
 
 public class Timer {
     public static void main(String[] args){
         long startTime = System.currentTimeMillis();
 
-        RelationMapLinker linker = new RelationMapLinker(true, args[0]);
+        CooccuranceMapLinker linker = new CooccuranceMapLinker(true, args[0]);
         long endTime = System.currentTimeMillis() - startTime;
         System.out.println("Overhead: " + endTime);
 

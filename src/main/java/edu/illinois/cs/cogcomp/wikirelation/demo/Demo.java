@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.wikirelation.demo;
 
-import edu.illinois.cs.cogcomp.wikirelation.wikipedia.RelationMapLinker;
+import edu.illinois.cs.cogcomp.wikirelation.core.CooccuranceMapLinker;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -18,7 +18,7 @@ public class Demo {
 
         int k = Integer.parseInt(args[2]);
 
-        RelationMapLinker linker = new RelationMapLinker(true, args[0]);
+        CooccuranceMapLinker linker = new CooccuranceMapLinker(true, args[0]);
 
         try {
             List<String> titles = new ArrayList<>();

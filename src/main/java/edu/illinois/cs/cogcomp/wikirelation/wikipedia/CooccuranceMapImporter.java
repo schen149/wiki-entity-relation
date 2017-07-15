@@ -6,6 +6,8 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.SpanLabelView;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.wiki.parsing.MLWikiDumpFilter;
 import edu.illinois.cs.cogcomp.wiki.parsing.processors.PageMeta;
+import edu.illinois.cs.cogcomp.wikirelation.core.CooccuranceMapLinker;
+import edu.illinois.cs.cogcomp.wikirelation.core.PageIDLinker;
 import edu.illinois.cs.cogcomp.wikirelation.util.WikiUtil;
 import info.bliki.wiki.dump.WikiArticle;
 import org.slf4j.Logger;
@@ -19,18 +21,18 @@ import java.util.*;
 /**
  * Some calculation
  */
-public class RelationMapImporter {
-    private static Logger logger = LoggerFactory.getLogger(RelationMapImporter.class);
+public class CooccuranceMapImporter {
+    private static Logger logger = LoggerFactory.getLogger(CooccuranceMapImporter.class);
 
     private String dumpdir;
     private String date;
     private String language;
     private String dumpfile, cooccurfile, configfile;
 
-    private RelationMapLinker relation;
+    private CooccuranceMapLinker relation;
     private PageIDLinker idLinker;
 
-    public RelationMapImporter(String dumpDir, String date, String language, String configfile) {
+    public CooccuranceMapImporter(String dumpDir, String date, String language, String configfile) {
         this.dumpdir = dumpDir;
         this.date = date;
         this.language = language;
@@ -89,7 +91,7 @@ public class RelationMapImporter {
     private void populateDB() throws IOException{
         logger.info("Populating mapdb...");
 
-        this.relation = new RelationMapLinker(false, this.configfile);
+        this.relation = new CooccuranceMapLinker(false, this.configfile);
 
         BufferedReader br = new BufferedReader(new FileReader(cooccurfile));
         String line;
@@ -130,7 +132,7 @@ public class RelationMapImporter {
     }
 
     public static void main(String args[]) {
-        RelationMapImporter rmg = new RelationMapImporter("/media/evo/data/wiki/enwiki-20170601/",
+        CooccuranceMapImporter rmg = new CooccuranceMapImporter("/media/evo/data/wiki/enwiki-20170601/",
                 "20170601", "en", "/home/squirrel/project/wiki-entity-relation/config/sihaopc-english-170601.properties");
 
         try{

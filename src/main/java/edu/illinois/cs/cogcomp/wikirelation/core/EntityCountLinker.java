@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.wikirelation.wikipedia;
+package edu.illinois.cs.cogcomp.wikirelation.core;
 
 import edu.illinois.cs.cogcomp.wikirelation.config.Configurator;
 import org.mapdb.DB;
@@ -80,7 +80,7 @@ public class EntityCountLinker {
         this.bDBopen = false;
     }
 
-    protected void put(Integer pageID, int entityCount) {
+    public void put(Integer pageID, int entityCount) {
         if (pageID != null)
             this.entityCount.put(pageID, entityCount);
     }

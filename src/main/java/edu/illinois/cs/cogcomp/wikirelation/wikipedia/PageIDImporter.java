@@ -5,6 +5,7 @@ import de.tudarmstadt.ukp.wikipedia.api.WikiConstants;
 import de.tudarmstadt.ukp.wikipedia.api.Wikipedia;
 import de.tudarmstadt.ukp.wikipedia.api.exception.WikiApiException;
 import de.tudarmstadt.ukp.wikipedia.api.exception.WikiInitializationException;
+import edu.illinois.cs.cogcomp.wikirelation.core.PageIDLinker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
