@@ -46,7 +46,7 @@ public class EntityCountLinker {
 
     private void loadDB() {
 
-        String dbfile = Configurator.MAPDB_PATH + File.separator + "wordcount";
+        String dbfile = Configurator.ENTITY_COUNT_MAPDB_PATH;
 
         if (bReadOnly) {
             db = DBMaker.fileDB(dbfile)

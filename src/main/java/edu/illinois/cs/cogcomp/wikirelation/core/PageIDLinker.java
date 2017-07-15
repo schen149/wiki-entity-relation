@@ -44,7 +44,7 @@ public class PageIDLinker {
 
     private void loadDB() {
 
-        String dbfile = Configurator.MAPDB_PATH + File.separator + "titlemap";
+        String dbfile = Configurator.PAGE_ID_MAPDB_PATH;
 
         if (bReadOnly) {
             db = DBMaker.fileDB(dbfile)
@@ -85,7 +85,7 @@ public class PageIDLinker {
         this.bDBopen = false;
     }
 
-    protected void put(Integer pageID, String title) {
+    public void put(Integer pageID, String title) {
         if (pageID != null) {
             this.title2id.put(title,pageID);
             this.id2title.put(pageID, title);

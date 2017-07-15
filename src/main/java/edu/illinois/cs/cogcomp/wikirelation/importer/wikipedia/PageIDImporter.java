@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.wikirelation.wikipedia;
+package edu.illinois.cs.cogcomp.wikirelation.importer.wikipedia;
 
 import de.tudarmstadt.ukp.wikipedia.api.DatabaseConfiguration;
 import de.tudarmstadt.ukp.wikipedia.api.WikiConstants;

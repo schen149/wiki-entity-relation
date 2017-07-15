@@ -56,7 +56,7 @@ public class CooccuranceMapLinker {
 
     private void loadDB(){
 
-        String dbfile = Configurator.MAPDB_PATH + File.separator + "coocurancemap-ne";
+        String dbfile = Configurator.COOCCURANCE_MAPDB_PATH;
 
         if (bReadOnly) {
             db = DBMaker.fileDB(dbfile)

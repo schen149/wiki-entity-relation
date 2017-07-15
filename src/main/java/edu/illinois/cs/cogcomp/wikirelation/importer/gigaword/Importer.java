@@ -1,14 +1,14 @@
-package edu.illinois.cs.cogcomp.wikirelation.gigaword;
+package edu.illinois.cs.cogcomp.wikirelation.importer.gigaword;
 
 import edu.illinois.cs.cogcomp.thrift.curator.Record;
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 
-public class GigawordImporter {
+public class Importer {
 
     private String recordFilePath;
-    public GigawordImporter(String recordFilePath){
+    public Importer(String recordFilePath){
         this.recordFilePath = recordFilePath;
     }
 
