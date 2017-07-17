@@ -44,6 +44,9 @@ public class Importer {
                 line = line.trim();
                 String recPath = recordDirPath + File.separator + line;
                 try {
+                    File fin = new File(recPath);
+                    if (!fin.isFile()) continue;
+                    
                     FileInputStream in = new FileInputStream(recPath);
                     Record rec = deserializeRecordFromBytes(IOUtils.toByteArray(in));
                     if (rec.getLabelViews().containsKey("wikifier")) {
