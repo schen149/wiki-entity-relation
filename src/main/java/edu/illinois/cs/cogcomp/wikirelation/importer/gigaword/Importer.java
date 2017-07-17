@@ -35,6 +35,7 @@ public class Importer {
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileIndex));
+            logger.info("File index loaded:\t" + fileIndex);
             String line;
             while ((line = br.readLine()) != null) {
 
@@ -56,7 +57,7 @@ public class Importer {
                 }
 
                 allDocCount++;
-                if (allDocCount % 2000 == 0)
+                if (allDocCount % 10 == 0)
                     logger.info("Document count:\t" + allDocCount + "\tProcessed:\t" + processedCount);
             }
         }
