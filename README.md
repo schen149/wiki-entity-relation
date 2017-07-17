@@ -1,4 +1,5 @@
 ### Usage
+Set the target source KB you want to use in properties file in `config/`. Currently there are two choices: Gigaword dataset or English wikipedia.
 See [`Demo`](https://github.com/schen149/wiki-entity-relation/blob/master/src/main/java/edu/illinois/cs/cogcomp/wikirelation/demo/Demo.java) classes for example usage.
 
 ### Sample Results
