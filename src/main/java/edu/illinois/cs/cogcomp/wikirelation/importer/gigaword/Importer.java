@@ -39,7 +39,7 @@ public class Importer {
             String line;
             while ((line = br.readLine()) != null) {
 
-                if (!line.endsWith("_ner")) continue;
+                //if (!line.endsWith("_ner")) continue;
 
                 line = line.trim();
                 String recPath = recordDirPath + File.separator + line;
