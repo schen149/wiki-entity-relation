@@ -92,11 +92,16 @@ public class PageIDLinker {
         }
     }
 
-    public String getTitleFromID(int pageID) {
+    public String getTitleFromID(Integer pageID) {
+        if (pageID == null)
+            return null;
         return this.id2title.get(pageID);
     }
 
     public Integer getIDFromTitle(String title) {
+        if (title == null)
+            return null;
+        title = title.trim();
         return this.title2id.get(title);
     }
 

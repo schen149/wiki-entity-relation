@@ -1,7 +1,10 @@
 package edu.illinois.cs.cogcomp.wikirelation.importer.gigaword;
 
+import edu.illinois.cs.cogcomp.thrift.base.Span;
 import edu.illinois.cs.cogcomp.thrift.curator.Record;
+import edu.illinois.cs.cogcomp.wikirelation.core.CooccuranceMapLinker;
 import edu.illinois.cs.cogcomp.wikirelation.core.PageIDLinker;
+import edu.illinois.cs.cogcomp.wikirelation.util.WikiUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TException;
@@ -9,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.List;
 
 public class Importer {
 
@@ -17,6 +21,7 @@ public class Importer {
     private String recordDirPath;
     private String configFile;
     private PageIDLinker idLinker;
+    private CooccuranceMapLinker coourranceMap;
 
     public Importer(String recordDirPath, String configFile) throws FileNotFoundException {
         this.recordDirPath = recordDirPath;
@@ -26,6 +31,7 @@ public class Importer {
 
         this.configFile = configFile;
         this.idLinker = new PageIDLinker(true, configFile);
+        this.coourranceMap = new CooccuranceMapLinker(false, configFile);
     }
 
     public void populateDB(String fileIndex) {
@@ -50,9 +56,24 @@ public class Importer {
                     FileInputStream in = new FileInputStream(recPath);
                     Record rec = deserializeRecordFromBytes(IOUtils.toByteArray(in));
                     if (rec.getLabelViews().containsKey("wikifier")) {
-                        // testing
-                        logger.info("Jackpot!");
-                        return;
+//                        // testing
+//                        logger.info("Jackpot!");
+//                        return;
+
+                        List<Span> spans = rec.getLabelViews().get("wikifier").getLabels();
+                        for (int i = 0; i < spans.size(); ++i) {
+                            for (int j = i + 1; j < spans.size(); j++) {
+                                String link1 = WikiUtil.url2wikilink(spans.get(i).getLabel());
+                                String link2 = WikiUtil.url2wikilink(spans.get(j).getLabel());
+                                Integer curId1 = idLinker.getIDFromTitle(link1);
+                                Integer curId2 = idLinker.getIDFromTitle(link2);
+
+                                if ((curId1 != null) && (curId2 != null)) {
+                                    coourranceMap.put(curId1, curId2);
+                                }
+                            }
+                        }
+                        processedCount++;
                     }
                 }
                 catch (Exception e) {
