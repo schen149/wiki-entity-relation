@@ -174,8 +174,13 @@ public class CooccuranceMapLinker {
     public String[] getTopKRelatedNETitles(String title, int k) {
         if (title == null || k <= 0)
             return new String[]{};
-        else
-            return Arrays.copyOfRange(getAllRelatedNETitles(title), 0, k);
+        else {
+            String[] cands = getAllRelatedNETitles(title);
+            if (cands.length <= k)
+                return cands;
+            else
+                return Arrays.copyOfRange(cands, 0, k);
+        }
     }
 
     private int[] getAllRelatedCandidateIds(int[] pageIds) {
@@ -237,7 +242,11 @@ public class CooccuranceMapLinker {
                 .mapToObj(c -> idLinker.getTitleFromID(c))
                 .filter(Objects::nonNull)
                 .toArray(String[]::new);
-        return Arrays.copyOfRange(allCands,0, k);
+        
+        if (allCands.length <= k)
+            return allCands;
+        else
+            return Arrays.copyOfRange(allCands, 0, k);
     }
 
     public String[] getTopKRelatedNETitles(String[] titles, int k) {
@@ -245,6 +254,10 @@ public class CooccuranceMapLinker {
                 .mapToObj(c -> idLinker.getTitleFromID(c))
                 .filter(Objects::nonNull)
                 .toArray(String[]::new);
-        return Arrays.copyOfRange(allCands,0, k);
+
+        if (allCands.length <= k)
+            return allCands;
+        else
+            return Arrays.copyOfRange(allCands, 0, k);
     }
 }
