@@ -60,7 +60,7 @@ public class CooccuranceMapLinker {
 
         if (bReadOnly) {
             db = DBMaker.fileDB(dbfile)
-                    .fileMmapEnable()
+                    .fileChannelEnable()
                     .closeOnJvmShutdown()
                     .readOnly()
                     .make();
