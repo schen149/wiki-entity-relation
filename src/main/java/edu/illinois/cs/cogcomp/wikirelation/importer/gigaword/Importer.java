@@ -93,7 +93,7 @@ public class Importer {
                 }
 
                 allDocCount++;
-                if (allDocCount % 10 == 0)
+                if (allDocCount % 10000 == 0)
                     logger.info("Document count:\t" + allDocCount + "\tProcessed:\t" + processedCount);
             }
         }
