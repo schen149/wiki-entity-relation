@@ -22,8 +22,7 @@ import java.util.stream.Collectors;
  * we can save at least 4B for each entry (Object head length).
  *
  * Theoretical space needed: ~70M * (8B + 4B) * 2 / 0.75 = 2.24 GB (Assume perfect primitive map)
- * Actual Space of output: ~2.7GB
- *
+ * Actual Space of output: ~2.7GB (800M with non-NE links filtered out)
  */
 public class CooccuranceMapLinker {
 
@@ -82,6 +81,7 @@ public class CooccuranceMapLinker {
 
     public void put(Integer pageId1, Integer pageId2) {
         if (pageId1 == null || pageId2 == null) return;
+        if (pageId1.equals(pageId2)) return;
         __put(pageId1, pageId2);
         __put(pageId2, pageId1);
     }

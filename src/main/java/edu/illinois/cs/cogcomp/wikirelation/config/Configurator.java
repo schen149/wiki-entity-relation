@@ -42,7 +42,7 @@ public class Configurator {
                     break;
                 case "gigaword":
                     PAGE_ID_MAPDB_PATH = rm.getString("enwiki_20170601_pageid_mapdb");
-                    COOCCURANCE_MAPDB_PATH = rm.getString("enwiki_20170601_cooccur_mapdb");
+                    COOCCURANCE_MAPDB_PATH = rm.getString("gigaword_cooccur_mapdb");
                     ENTITY_COUNT_MAPDB_PATH = rm.getString("enwiki_20170601_entity_count_mapdb");
                     break;
                 default:
