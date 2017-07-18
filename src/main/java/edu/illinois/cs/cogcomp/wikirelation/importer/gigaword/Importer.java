@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Importer {
 
@@ -61,10 +63,20 @@ public class Importer {
 //                        return;
 
                         List<Span> spans = rec.getLabelViews().get("wikifier").getLabels();
-                        for (int i = 0; i < spans.size(); ++i) {
+
+                        /* Pre-filter out non NE-type links */
+                        List<String> links = spans.stream()
+                                .map(Span::getLabel)
+                                .map(WikiUtil::url2wikilink)
+                                .filter(Objects::nonNull)
+                                .filter(l -> WikiUtil.isTitleNEType(l, "en"))
+                                .collect(Collectors.toList());
+
+                        for (int i = 0; i < links.size(); ++i) {
                             for (int j = i + 1; j < spans.size(); j++) {
-                                String link1 = WikiUtil.url2wikilink(spans.get(i).getLabel());
-                                String link2 = WikiUtil.url2wikilink(spans.get(j).getLabel());
+                                String link1 = links.get(i);
+                                String link2 = links.get(j);
+
                                 Integer curId1 = idLinker.getIDFromTitle(link1);
                                 Integer curId2 = idLinker.getIDFromTitle(link2);
 
