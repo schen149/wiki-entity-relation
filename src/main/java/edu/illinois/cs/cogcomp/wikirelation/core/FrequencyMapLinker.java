@@ -1,19 +1,13 @@
 package edu.illinois.cs.cogcomp.wikirelation.core;
 
-import edu.illinois.cs.cogcomp.core.datastructures.Pair;
-import edu.illinois.cs.cogcomp.wikirelation.config.Configurator;
-import edu.illinois.cs.cogcomp.wikirelation.util.DataTypeUtil;
 import org.mapdb.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
- * Record Frequency
+ * Record Frequency of strings
  */
 public class FrequencyMapLinker {
 
@@ -27,7 +21,7 @@ public class FrequencyMapLinker {
 
     public FrequencyMapLinker(boolean bReadOnly, String mapdbDir) {
         this.bReadOnly = bReadOnly;
-//        this.idLinker = new StringIDLinker(true, mapdbDir);
+        this.idLinker = new StringIDLinker(true, mapdbDir);
 
         loadDB(mapdbDir);
     }
@@ -80,7 +74,20 @@ public class FrequencyMapLinker {
         }
     }
 
-    public int getCount(Integer id) {
+    /**
+     * Get the number of appearences of a string
+     * @param name name of the string
+     */
+    public int getFrequency(String name) {
+        Integer id = idLinker.getIDFromString(name);
+        return this.getFrequency(id);
+    }
+
+    /**
+     * Get the number of appearences of a string
+     * @param id id of the string
+     */
+    public int getFrequency(Integer id) {
         if (id == null) return 0;
         if (freqCount.containsKey(id)) {
             Integer count = freqCount.get(id);

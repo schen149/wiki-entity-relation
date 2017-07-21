@@ -1,16 +1,13 @@
 package edu.illinois.cs.cogcomp.wikirelation.core;
 
-import edu.illinois.cs.cogcomp.wikirelation.config.Configurator;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
 import org.mapdb.Serializer;
-import org.mapdb.serializer.SerializerArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.Normalizer;
 
 /**
@@ -77,7 +74,7 @@ public class StringIDLinker {
             this.string2id.put(normalizeString(title), id);
     }
 
-    public Integer getIDFromTitle(String title) {
+    public Integer getIDFromString(String title) {
         if (title == null)
             return null;
         title = title.trim();
