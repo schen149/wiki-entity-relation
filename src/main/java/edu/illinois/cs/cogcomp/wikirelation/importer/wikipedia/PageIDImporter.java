@@ -6,15 +6,11 @@ import de.tudarmstadt.ukp.wikipedia.api.Wikipedia;
 import de.tudarmstadt.ukp.wikipedia.api.exception.WikiApiException;
 import de.tudarmstadt.ukp.wikipedia.api.exception.WikiInitializationException;
 import edu.illinois.cs.cogcomp.wikirelation.core.PageIDLinker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Import wikipedia Page title to ID map from JWPL
  */
 public class PageIDImporter {
-
-    private static Logger logger = LoggerFactory.getLogger(PageIDImporter.class);
 
     public static Wikipedia wiki = null;
     public PageIDLinker titleMap;
@@ -40,11 +36,8 @@ public class PageIDImporter {
     }
 
     public void parse() {
-        logger.info("Start Parsing page id...");
         Iterable<Integer> it = wiki.getPageIds();
-
         it.forEach(this::updateMap);
-        logger.info("Finish Parsing page id.");
     }
 
     /* TODO: not the best idea to catch exception here */
@@ -54,7 +47,7 @@ public class PageIDImporter {
             titleMap.put(pageId, title);
         }
         catch (WikiApiException e) {
-            logger.info("Can't find page with pageId " + pageId);
+            System.out.println("Can't find page with pageId " + pageId);
         }
     }
 

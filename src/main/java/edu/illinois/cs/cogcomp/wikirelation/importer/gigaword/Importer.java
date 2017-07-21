@@ -29,7 +29,7 @@ public class Importer {
     private File recordDir;
     private String configFile, indexFile;
     private PageIDLinker idLinker;
-    private CooccuranceMapLinker coourranceMap;
+    private final CooccuranceMapLinker coourranceMap;
     private List<String> processed;
 
     public Importer(String recordDirPath, String configFile, String indexFile) throws FileNotFoundException {
@@ -44,7 +44,7 @@ public class Importer {
         this.indexFile = indexFile;
         this.idLinker = new PageIDLinker(true, configFile);
         this.coourranceMap = new CooccuranceMapLinker(false, configFile);
-        this.pool = CommonUtil.getBoundedThreadPool(20);
+        this.pool = CommonUtil.getBoundedThreadPool(50);
 
         /* Attach shutdown hook */
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -104,7 +104,9 @@ public class Importer {
                                         Integer curId2 = idLinker.getIDFromTitle(link2);
 
                                         if ((curId1 != null) && (curId2 != null)) {
-                                            coourranceMap.put(curId1, curId2);
+                                            synchronized (coourranceMap) {
+                                                coourranceMap.put(curId1, curId2);
+                                            }
                                         }
                                     }
                                 }
@@ -116,7 +118,7 @@ public class Importer {
                 }
                 processed.add(f.getName());
                 count++;
-                if (count % 500 == 0)
+                if (count % 100 == 0)
                     logger.info("Processed:\t" + count);
             }
         }
