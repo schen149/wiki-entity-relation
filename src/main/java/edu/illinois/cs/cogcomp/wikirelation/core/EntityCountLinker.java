@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * A bimap from wikipedia page title to pageid (curID)
+ * Count entity count of each wiki pedia page
  */
 public class EntityCountLinker {
 
