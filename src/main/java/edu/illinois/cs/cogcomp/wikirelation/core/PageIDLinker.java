@@ -53,10 +53,12 @@ public class PageIDLinker {
                     .readOnly()
                     .make();
             title2id = db.hashMap("title2id")
+                    .layout(16, 32, 4)
                     .keySerializer(Serializer.STRING)
                     .valueSerializer(Serializer.INTEGER)
                     .open();
             id2title = db.hashMap("id2title")
+                    .layout(16, 32, 4)
                     .keySerializer(Serializer.INTEGER)
                     .valueSerializer(Serializer.STRING)
                     .open();
@@ -66,10 +68,12 @@ public class PageIDLinker {
                     .closeOnJvmShutdown()
                     .make();
             title2id = db.hashMap("title2id")
+                    .layout(16, 32, 4)
                     .keySerializer(Serializer.STRING)
                     .valueSerializer(Serializer.INTEGER)
                     .create();
             id2title = db.hashMap("id2title")
+                    .layout(16, 32, 4)
                     .keySerializer(Serializer.INTEGER)
                     .valueSerializer(Serializer.STRING)
                     .create();
