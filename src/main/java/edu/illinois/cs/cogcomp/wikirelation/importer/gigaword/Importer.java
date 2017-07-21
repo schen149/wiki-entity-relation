@@ -4,6 +4,7 @@ import edu.illinois.cs.cogcomp.thrift.base.Span;
 import edu.illinois.cs.cogcomp.thrift.curator.Record;
 import edu.illinois.cs.cogcomp.wikirelation.core.CooccuranceMapLinker;
 import edu.illinois.cs.cogcomp.wikirelation.core.PageIDLinker;
+import edu.illinois.cs.cogcomp.wikirelation.util.CommonUtil;
 import edu.illinois.cs.cogcomp.wikirelation.util.WikiUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.thrift.TDeserializer;
@@ -13,22 +14,22 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 public class Importer {
 
     private static Logger logger = LoggerFactory.getLogger(Importer.class);
 
+    private final ThreadPoolExecutor pool;
+
     private String recordDirPath;
     private File recordDir;
     private String configFile, indexFile;
     private PageIDLinker idLinker;
     private CooccuranceMapLinker coourranceMap;
-    private IndexSaver saver;
     private List<String> processed;
 
     public Importer(String recordDirPath, String configFile, String indexFile) throws FileNotFoundException {
@@ -43,13 +44,29 @@ public class Importer {
         this.indexFile = indexFile;
         this.idLinker = new PageIDLinker(true, configFile);
         this.coourranceMap = new CooccuranceMapLinker(false, configFile);
-        this.saver = new IndexSaver();
-        saver.attachShutdownHook();
+        this.pool = CommonUtil.getBoundedThreadPool(20);
+
+        /* Attach shutdown hook */
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                try {
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(indexFile));
+                    for (String file: processed) {
+                        bw.write(file);
+                        bw.newLine();
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public void populateDB() {
 
-        AtomicInteger allDocCount = new AtomicInteger(0);
+        int count = 0;
 
         File[] recordFiles = recordDir.listFiles();
         if (recordFiles == null) {
@@ -58,17 +75,20 @@ public class Importer {
         }
         logger.info("Detected Files:\t" + recordFiles.length);
 
-        Arrays.stream(recordFiles)
-                .forEach(f -> {
-                    if (f.isFile()){
-                        try {
-                            FileInputStream in = new FileInputStream(f);
-                            Record rec = deserializeRecordFromBytes(IOUtils.toByteArray(in));
-                            if (rec.getLabelViews().containsKey("wikifier")) {
+        for (File f: recordFiles) {
+            if (f.isFile()){
+                try {
+                    FileInputStream in = new FileInputStream(f);
+                    Record rec = deserializeRecordFromBytes(IOUtils.toByteArray(in));
+                    if (rec.getLabelViews().containsKey("wikifier")) {
+
+                        pool.execute(new Worker(rec) {
+                            @Override
+                            public void processRecord(Record rec) {
                                 List<Span> spans = rec.getLabelViews().get("wikifier").getLabels();
 
                                 /* Pre-filter out non NE-type links */
-                                List<String> links = spans.stream().parallel()
+                                List<String> links = spans.stream()
                                         .map(Span::getLabel)
                                         .map(WikiUtil::url2wikilink)
                                         .filter(Objects::nonNull)
@@ -89,15 +109,17 @@ public class Importer {
                                     }
                                 }
                             }
-                        } catch (Exception e) {
-                            return;
-                        }
-                        processed.add(f.getName());
-                        int count = allDocCount.incrementAndGet();
-                        if (count % 100 == 0)
-                            logger.info("Processed:\t" + count);
+                        });
                     }
-                });
+                } catch (Exception e) {
+                    continue;
+                }
+                processed.add(f.getName());
+                count++;
+                if (count % 500 == 0)
+                    logger.info("Processed:\t" + count);
+            }
+        }
     }
 
     public static Record deserializeRecordFromBytes(byte[] bytes) throws TException {
@@ -122,26 +144,6 @@ public class Importer {
         catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
-        }
-    }
-
-    class IndexSaver {
-        public void attachShutdownHook(){
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        BufferedWriter bw = new BufferedWriter(new FileWriter(indexFile));
-                        for (String file: processed) {
-                            bw.write(file);
-                            bw.newLine();
-                        }
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
         }
     }
 }
