@@ -242,7 +242,7 @@ public class CooccuranceMapLinker {
                 .mapToObj(c -> idLinker.getTitleFromID(c))
                 .filter(Objects::nonNull)
                 .toArray(String[]::new);
-        
+
         if (allCands.length <= k)
             return allCands;
         else

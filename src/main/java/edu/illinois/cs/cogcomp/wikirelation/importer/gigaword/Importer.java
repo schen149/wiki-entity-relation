@@ -68,7 +68,7 @@ public class Importer {
                                 List<Span> spans = rec.getLabelViews().get("wikifier").getLabels();
 
                                 /* Pre-filter out non NE-type links */
-                                List<String> links = spans.stream()
+                                List<String> links = spans.stream().parallel()
                                         .map(Span::getLabel)
                                         .map(WikiUtil::url2wikilink)
                                         .filter(Objects::nonNull)
@@ -92,6 +92,7 @@ public class Importer {
                         } catch (Exception e) {
                             return;
                         }
+                        processed.add(f.getName());
                         int count = allDocCount.incrementAndGet();
                         if (count % 100 == 0)
                             logger.info("Processed:\t" + count);
