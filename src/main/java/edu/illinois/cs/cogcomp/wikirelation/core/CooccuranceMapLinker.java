@@ -30,7 +30,7 @@ public class CooccuranceMapLinker {
 
     private DB db;
     private PageIDLinker idLinker;
-    private BTreeMap<Long, Integer> coocuranceCount;
+    private BTreeMap<Long, Short> coocuranceCount;
 
     private boolean bReadOnly;
     private static String defaultConfigFile = "config/cogcomp-english-170601.properties";
@@ -65,7 +65,7 @@ public class CooccuranceMapLinker {
                     .make();
             coocuranceCount = db.treeMap("coocurance-treemap")
                     .keySerializer(Serializer.LONG)
-                    .valueSerializer(Serializer.INTEGER)
+                    .valueSerializer(Serializer.SHORT)
                     .open();
         }
         else {
@@ -74,7 +74,7 @@ public class CooccuranceMapLinker {
                     .make();
             coocuranceCount = db.treeMap("coocurance-treemap")
                     .keySerializer(Serializer.LONG)
-                    .valueSerializer(Serializer.INTEGER)
+                    .valueSerializer(Serializer.SHORT)
                     .create();
         }
     }
@@ -90,9 +90,9 @@ public class CooccuranceMapLinker {
     private void __put(int pageId1, int pageId2) {
         long key = DataTypeUtil.concatTwoIntToLong(pageId1, pageId2);
         if (coocuranceCount.containsKey(key))
-            coocuranceCount.put(key, coocuranceCount.get(key) + 1);
+            coocuranceCount.put(key, (short) (coocuranceCount.get(key) + 1));
         else
-            coocuranceCount.put(key, 1);
+            coocuranceCount.put(key, (short) 1);
     }
 
     public void closeDB() {
@@ -115,8 +115,8 @@ public class CooccuranceMapLinker {
         long lowerBound = DataTypeUtil.concatTwoIntToLong(pageId, 0);
 
         // Co-occurance count of the given pageId
-        Map<Long, Integer> count = this.coocuranceCount.subMap(lowerBound, upperBound);
-        List<Map.Entry<Long, Integer>> sortedCount = new ArrayList<>(count.entrySet());
+        Map<Long, Short> count = this.coocuranceCount.subMap(lowerBound, upperBound);
+        List<Map.Entry<Long, Short>> sortedCount = new ArrayList<>(count.entrySet());
         sortedCount.sort((e1,e2) -> e2.getValue() - e1.getValue());
 
         int[] candIds = sortedCount.stream()
@@ -196,15 +196,15 @@ public class CooccuranceMapLinker {
             long upperBound = DataTypeUtil.concatTwoIntToLong(pageId + 1, 0);
             long lowerBound = DataTypeUtil.concatTwoIntToLong(pageId, 0);
 
-            Map<Long, Integer> count = coocuranceCount.subMap(lowerBound, upperBound);
+            Map<Long, Short> count = coocuranceCount.subMap(lowerBound, upperBound);
 
-            for (Map.Entry<Long, Integer> curCand : count.entrySet()) {
+            for (Map.Entry<Long, Short> curCand : count.entrySet()) {
                 int candId = DataTypeUtil.getLower32bitFromLong(curCand.getKey());
                 if (!cands.containsKey(candId))
-                    cands.put(candId, new Pair<>(1, curCand.getValue()));
+                    cands.put(candId, new Pair<>(1, (int) curCand.getValue()));
                 else {
                     Pair<Integer, Integer> oldVal = cands.get(candId);
-                    Pair<Integer, Integer> newVal = new Pair<>(oldVal.getFirst() + 1, Math.max(oldVal.getSecond(),curCand.getValue()));
+                    Pair<Integer, Integer> newVal = new Pair<>( oldVal.getFirst() + 1, Math.max(oldVal.getSecond(),curCand.getValue()));
                     cands.put(candId, newVal);
                 }
             }

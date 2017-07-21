@@ -24,7 +24,7 @@ public class Timer {
         endTime = System.currentTimeMillis() - startTime;
         System.out.println("Time Elasped: " + endTime);
 
-        String[] set3 = new String[]{"Angela_Merkel","Barack_Obama","Donald_Trump"};
+        String[] set3 = new String[]{"Angela_Merkel","Barack_Obama","Malaysia"};
         startTime = System.currentTimeMillis();
         linker.getTopKRelatedNETitles(set3,10);
         endTime = System.currentTimeMillis() - startTime;
