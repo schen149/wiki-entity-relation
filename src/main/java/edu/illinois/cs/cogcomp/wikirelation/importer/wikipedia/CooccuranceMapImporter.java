@@ -133,7 +133,7 @@ public class CooccuranceMapImporter {
 
     public static void main(String args[]) {
         CooccuranceMapImporter rmg = new CooccuranceMapImporter("/media/evo/data/wiki/enwiki-20170601/",
-                "20170601", "en", "/home/squirrel/project/wiki-entity-relation/config/sihaopc-english-170601.properties");
+                "20170601", "en", "/home/squirrel/project/wiki-entity-relation/config/sihaopc-tmp.properties");
 
         try{
             rmg.populateDB();

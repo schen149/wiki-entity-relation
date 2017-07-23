@@ -1,5 +1,6 @@
 package edu.illinois.cs.cogcomp.wikirelation.importer.gigaword;
 
+import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.thrift.base.Span;
 import edu.illinois.cs.cogcomp.thrift.curator.Record;
 import edu.illinois.cs.cogcomp.wikirelation.core.CooccuranceMapLinker;
@@ -13,17 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Importer {
 
     private static Logger logger = LoggerFactory.getLogger(Importer.class);
-
-    private final ThreadPoolExecutor pool;
 
     private String recordDirPath;
     private File recordDir;
@@ -44,7 +40,6 @@ public class Importer {
         this.indexFile = indexFile;
         this.idLinker = new PageIDLinker(true, configFile);
         this.coourranceMap = new CooccuranceMapLinker(false, configFile);
-        this.pool = CommonUtil.getBoundedThreadPool(50);
 
         /* Attach shutdown hook */
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -80,38 +75,39 @@ public class Importer {
                 try {
                     FileInputStream in = new FileInputStream(f);
                     Record rec = deserializeRecordFromBytes(IOUtils.toByteArray(in));
+                    Map<Pair<Integer, Integer>, Integer> cache = new HashMap<>();
                     if (rec.getLabelViews().containsKey("wikifier")) {
 
-                        pool.execute(new Worker(rec) {
-                            @Override
-                            public void processRecord(Record rec) {
-                                List<Span> spans = rec.getLabelViews().get("wikifier").getLabels();
+                        List<Span> spans = rec.getLabelViews().get("wikifier").getLabels();
 
-                                /* Pre-filter out non NE-type links */
-                                List<String> links = spans.stream()
-                                        .map(Span::getLabel)
-                                        .map(WikiUtil::url2wikilink)
-                                        .filter(Objects::nonNull)
-                                        .filter(l -> WikiUtil.isTitleNEType(l, "en"))
-                                        .collect(Collectors.toList());
+                        /* Pre-filter out non NE-type links */
+                        List<String> links = spans.stream()
+                                .map(Span::getLabel)
+                                .map(WikiUtil::url2wikilink)
+                                .filter(Objects::nonNull)
+                                .filter(l -> WikiUtil.isTitleNEType(l, "en"))
+                                .collect(Collectors.toList());
 
-                                for (int i = 0; i < links.size(); ++i) {
-                                    for (int j = i + 1; j < links.size(); ++j) {
-                                        String link1 = links.get(i);
-                                        String link2 = links.get(j);
+                        for (int i = 0; i < links.size(); ++i) {
+                            for (int j = i + 1; j < links.size(); ++j) {
+                                String link1 = links.get(i);
+                                String link2 = links.get(j);
 
-                                        Integer curId1 = idLinker.getIDFromTitle(link1);
-                                        Integer curId2 = idLinker.getIDFromTitle(link2);
+                                Integer curId1 = idLinker.getIDFromTitle(link1);
+                                Integer curId2 = idLinker.getIDFromTitle(link2);
 
-                                        if ((curId1 != null) && (curId2 != null)) {
-                                            synchronized (coourranceMap) {
-                                                coourranceMap.put(curId1, curId2);
-                                            }
-                                        }
-                                    }
+                                if ((curId1 != null) && (curId2 != null) && !(curId1.equals(curId2))) {
+                                    Pair<Integer, Integer> pair = new Pair<>(curId1, curId2);
+                                    if (cache.containsKey(pair))
+                                        cache.put(pair, cache.get(pair) + 1);
+                                    else
+                                        cache.put(pair, 1);
                                 }
                             }
-                        });
+                        }
+
+                        cache.entrySet().forEach(e ->
+                                this.coourranceMap.put(e.getKey().getFirst(), e.getKey().getSecond(), e.getValue()));
                     }
                 } catch (Exception e) {
                     continue;
