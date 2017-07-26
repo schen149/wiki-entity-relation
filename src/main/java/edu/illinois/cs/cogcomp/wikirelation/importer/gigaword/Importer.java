@@ -5,7 +5,6 @@ import edu.illinois.cs.cogcomp.thrift.base.Span;
 import edu.illinois.cs.cogcomp.thrift.curator.Record;
 import edu.illinois.cs.cogcomp.wikirelation.core.CooccuranceMapLinker;
 import edu.illinois.cs.cogcomp.wikirelation.core.PageIDLinker;
-import edu.illinois.cs.cogcomp.wikirelation.util.CommonUtil;
 import edu.illinois.cs.cogcomp.wikirelation.util.WikiUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.thrift.TDeserializer;

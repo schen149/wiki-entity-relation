@@ -9,9 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.text.Normalizer;
 
 /**
  * Mapping from String (and alternative forms) to a uniform id
@@ -23,7 +20,7 @@ public class StringIDLinker {
     private boolean bReadOnly;
     public boolean bDBopen = false;
 
-    private HTreeMap<String, Integer> string2id;
+    private HTreeMap<String, int[]> string2id;
 
     public StringIDLinker(boolean bReadOnly, String mapdbDir) {
         this.bReadOnly = bReadOnly;
@@ -43,7 +40,7 @@ public class StringIDLinker {
             string2id = db.hashMap("string2id")
                     .layout(8,64,4)
                     .keySerializer(Serializer.STRING)
-                    .valueSerializer(Serializer.INTEGER)
+                    .valueSerializer(Serializer.INT_ARRAY)
                     .open();
         }
         else {
@@ -53,7 +50,7 @@ public class StringIDLinker {
             string2id = db.hashMap("string2id")
                     .layout(8,64,4)
                     .keySerializer(Serializer.STRING)
-                    .valueSerializer(Serializer.INTEGER)
+                    .valueSerializer(Serializer.INT_ARRAY)
                     .create();
         }
         this.bDBopen = true;
@@ -67,20 +64,26 @@ public class StringIDLinker {
         this.bDBopen = false;
     }
 
-    public void putWithoutNormalization(String title, Integer id) {
-        if ((id != null) && (title != null))
-            this.string2id.put(title, id);
-    }
-
     public void put(String title, Integer id) {
-        if ((id != null) && (title != null))
-            this.string2id.put(DataTypeUtil.normalizeString(title), id);
+        if ((id != null) && (title != null)) {
+            if (string2id.containsKey(title)) {
+                int[] idList = string2id.get(title);
+                idList = DataTypeUtil.appendElement(idList, id);
+                string2id.put(title, idList);
+            }
+            else
+            {
+                string2id.put(title, new int[]{id});
+            }
+        }
     }
 
-    public Integer getIDFromString(String title) {
+    public int[] getIDsFromString(String title) {
         if (title == null)
             return null;
-        title = title.trim();
+        
+        // TODO: Maybe remove this?
+        title = DataTypeUtil.normalizeString(title);
         return this.string2id.get(title);
     }
 

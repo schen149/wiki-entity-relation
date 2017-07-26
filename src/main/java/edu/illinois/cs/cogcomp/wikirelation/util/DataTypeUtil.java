@@ -43,4 +43,10 @@ public class DataTypeUtil {
         else
             return null;
     }
+
+    public static int[] appendElement(int[] a, int e) {
+        a = Arrays.copyOf(a, a.length + 1);
+        a[a.length - 1] = e;
+        return a;
+    }
 }
