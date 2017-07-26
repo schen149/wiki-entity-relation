@@ -1,12 +1,11 @@
 package edu.illinois.cs.cogcomp.wikirelation.demo;
 
 import edu.illinois.cs.cogcomp.wikirelation.core.FrequencyMapLinker;
-import edu.illinois.cs.cogcomp.wikirelation.core.PageIDLinker;
 
 public class DemoFrequencyCount {
     public static void main(String[] args){
-        if (args.length != 1) {
-            System.err.println("Usage: java DemoPageIDLinker [mapdb-file-path] [geoname]");
+        if (args.length != 2) {
+            System.err.println("Usage: java DemoFrequencyCount [mapdb-file-path] [geoname]");
             System.exit(1);
         }
 
