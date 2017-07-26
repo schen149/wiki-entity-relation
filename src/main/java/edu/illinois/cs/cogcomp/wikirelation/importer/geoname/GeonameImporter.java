@@ -35,7 +35,7 @@ public class GeonameImporter {
 
     public void populateDB(Charset charset) {
 
-        if (charset.equals(StandardCharsets.UTF_8) || charset.equals(StandardCharsets.UTF_8)) {
+        if (!charset.equals(StandardCharsets.UTF_8) && !charset.equals(StandardCharsets.US_ASCII)) {
             logger.error("Charset Not Supported. Use either utf-8 or ascii.");
             return;
         }
