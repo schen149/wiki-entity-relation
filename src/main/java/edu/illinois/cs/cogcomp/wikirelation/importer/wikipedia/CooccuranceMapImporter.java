@@ -1,5 +1,6 @@
 package edu.illinois.cs.cogcomp.wikirelation.importer.wikipedia;
 
+import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.SpanLabelView;
@@ -103,22 +104,30 @@ public class CooccuranceMapImporter {
         int count = 0;
         while ((line = br.readLine()) != null) {
             String[] ids = line.split("\\t");
-            if (ids.length != 2) continue;
-            Integer pageId1 = Integer.parseInt(ids[0]);
-            Integer pageId2 = Integer.parseInt(ids[1]);
 
-            // only record NE titles
-            String title1 = idLinker.getTitleFromID(pageId1);
-            String title2 = idLinker.getTitleFromID(pageId2);
+            Map<Pair<Integer, Integer>, Integer> buffer = new HashMap<>();
 
-            if (title1 != null && title2 != null
-                    && WikiUtil.isTitleNEType(title1, "en") && WikiUtil.isTitleNEType(title2, "en")) {
-                this.relation.put(pageId1, pageId2);
+            for (int i = 0; i < ids.length; ++i) {
+                try {
+                    Integer pageId1 = Integer.parseInt(ids[i]);
+                    for (int j = i + 1; j < ids.length; ++j) {
+                        Integer pageId2 = Integer.parseInt(ids[j]);
+
+                        Pair<Integer, Integer> pair = new Pair<>(pageId1, pageId2);
+                            if (buffer.containsKey(pair))
+                                buffer.put(pair, buffer.get(pair) + 1);
+                            else
+                                buffer.put(pair, 1);
+                        }
+                }
+                catch (NumberFormatException e) {
+                }
             }
 
+            buffer.entrySet().forEach(e ->
+                    this.relation.put(e.getKey().getFirst(), e.getKey().getSecond(), e.getValue()));
             count++;
-
-            if (count % 10000 == 0)
+            if (count % 500 == 0)
                 logger.info("Lines processed: " + count);
         }
 
@@ -138,11 +147,11 @@ public class CooccuranceMapImporter {
 
     public static void main(String args[]) {
         CooccuranceMapImporter rmg = new CooccuranceMapImporter("/media/evo/data/wiki/enwiki-20170601/",
-                "20170601", "en", "/home/squirrel/project/wiki-entity-relation/config/sihaopc.properties");
+                "20170601", "en", "/home/squirrel/project/wiki-entity-relation/config/sihaopc-tmp.properties");
 
         try{
-//            rmg.populateDB();
-            rmg.parseWikiDump();
+            rmg.populateDB();
+//            rmg.parseWikiDump();
         }
         catch (Exception e) {
             logger.info("Error reading wikipedia dump at /media/evo/data/wiki/enwiki-20170601/");

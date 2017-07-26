@@ -1,5 +1,6 @@
 package edu.illinois.cs.cogcomp.wikirelation.core;
 
+import edu.illinois.cs.cogcomp.wikirelation.util.DataTypeUtil;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
@@ -8,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 
 /**
@@ -71,7 +74,7 @@ public class StringIDLinker {
 
     public void put(String title, Integer id) {
         if ((id != null) && (title != null))
-            this.string2id.put(normalizeString(title), id);
+            this.string2id.put(DataTypeUtil.normalizeString(title), id);
     }
 
     public Integer getIDFromString(String title) {
@@ -81,11 +84,4 @@ public class StringIDLinker {
         return this.string2id.get(title);
     }
 
-    /**
-     * Normalize utf-8 encoded latin-based characters to canonical forms in ascii
-     * See https://en.wikipedia.org/wiki/Unicode_equivalence for explanation on 'NFKD' form
-     */
-    public static String normalizeString(String str) {
-        return Normalizer.normalize(str.trim().toLowerCase(), Normalizer.Form.NFKD).replaceAll("\\p{M}","");
-    }
 }

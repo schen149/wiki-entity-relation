@@ -2,6 +2,7 @@ package edu.illinois.cs.cogcomp.wikirelation.importer.geoname;
 
 import edu.illinois.cs.cogcomp.wikirelation.core.FrequencyMapLinker;
 import edu.illinois.cs.cogcomp.wikirelation.core.StringIDLinker;
+import edu.illinois.cs.cogcomp.wikirelation.util.DataTypeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,23 +51,25 @@ public class GeonameImporter {
                 }
 
                 Set<String> forms = new HashSet<>();
-                forms.add(StringIDLinker.normalizeString(parts[1]));
-                forms.add(StringIDLinker.normalizeString(parts[2]));
-                int formCount = 2;
+                String form = DataTypeUtil.utf8ToAscii(parts[1]);
+                addToSet(forms, form);
+
+                form = DataTypeUtil.utf8ToAscii(parts[2]);
+                addToSet(forms, form);
+
                 /* No alternative forms */
                 if (!parts[3].isEmpty()) {
-                    for (String form : parts[3].split(",")) {
-                        forms.add(StringIDLinker.normalizeString(form));
-                        formCount++;
+                    for (String f : parts[3].split(",")) {
+                        addToSet(forms, f);
                     }
                 }
 
                 /* Update id linker one by one */
-                for (String form: forms)
-                    idLinker.put(form, id);
+                for (String f: forms)
+                    idLinker.put(f, id);
 
                 /* Update frequency map */
-                freqMap.put(id, formCount);
+                freqMap.put(id, forms.size());
 
                 processed++;
 
@@ -86,6 +89,11 @@ public class GeonameImporter {
 
         idLinker.closeDB();
         freqMap.closeDB();
+    }
+
+    private void addToSet(Set<String> set, String str) {
+        if (str != null)
+            set.add(str);
     }
 
     public static void main(String[] args) {
