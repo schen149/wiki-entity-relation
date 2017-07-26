@@ -10,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,7 +33,12 @@ public class GeonameImporter {
         this.freqMap = new FrequencyMapLinker(false, mapdbDir);
     }
 
-    public void populateDB() {
+    public void populateDB(Charset charset) {
+
+        if (charset.equals(StandardCharsets.UTF_8) || charset.equals(StandardCharsets.UTF_8)) {
+            logger.error("Charset Not Supported. Use either utf-8 or ascii.");
+            return;
+        }
         try {
             BufferedReader br = new BufferedReader(new FileReader(inputFilePath));
             String line;
@@ -51,16 +58,29 @@ public class GeonameImporter {
                 }
 
                 Set<String> forms = new HashSet<>();
-                String form = DataTypeUtil.utf8ToAscii(parts[1]);
-                addToSet(forms, form);
 
-                form = DataTypeUtil.utf8ToAscii(parts[2]);
-                addToSet(forms, form);
-
-                /* No alternative forms */
-                if (!parts[3].isEmpty()) {
-                    for (String f : parts[3].split(",")) {
-                        addToSet(forms, f);
+                if (charset.equals(StandardCharsets.UTF_8)) {
+                    String form = DataTypeUtil.utf8ToAscii(parts[1]);
+                    addToSet(forms, form);
+                    form = DataTypeUtil.utf8ToAscii(parts[2]);
+                    addToSet(forms, form);
+                    if (!parts[3].isEmpty()) {
+                        for (String f : parts[3].split(",")) {
+                            form = DataTypeUtil.utf8ToAscii(f);
+                            addToSet(forms, form);
+                        }
+                    }
+                }
+                else {
+                    String form = DataTypeUtil.normalizeString(parts[1]);
+                    addToSet(forms, form);
+                    form = DataTypeUtil.normalizeString(parts[2]);
+                    addToSet(forms, form);
+                    if (!parts[3].isEmpty()) {
+                        for (String f : parts[3].split(",")) {
+                            form = DataTypeUtil.normalizeString(f);
+                            addToSet(forms, form);
+                        }
                     }
                 }
 
@@ -103,7 +123,7 @@ public class GeonameImporter {
         }
 
         GeonameImporter gi = new GeonameImporter(args[0], args[1]);
-        gi.populateDB();
+        gi.populateDB(StandardCharsets.UTF_8);
     }
 
 }

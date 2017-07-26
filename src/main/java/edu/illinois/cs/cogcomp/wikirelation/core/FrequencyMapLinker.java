@@ -1,5 +1,6 @@
 package edu.illinois.cs.cogcomp.wikirelation.core;
 
+import edu.illinois.cs.cogcomp.wikirelation.util.DataTypeUtil;
 import org.mapdb.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +84,7 @@ public class FrequencyMapLinker {
      * @param name name of the string
      */
     public int getFrequency(String name) {
+        name = DataTypeUtil.normalizeString(name);
         Integer id = idLinker.getIDFromString(name);
         return this.getFrequency(id);
     }
