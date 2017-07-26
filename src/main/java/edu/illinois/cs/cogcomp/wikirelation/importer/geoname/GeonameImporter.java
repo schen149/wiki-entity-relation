@@ -59,7 +59,7 @@ public class GeonameImporter {
 
                 Set<String> forms = new HashSet<>();
 
-                if (charset.equals(StandardCharsets.UTF_8)) {
+                if (charset.equals(StandardCharsets.US_ASCII)) {
                     String form = DataTypeUtil.utf8ToAscii(parts[1]);
                     addToSet(forms, form);
                     form = DataTypeUtil.utf8ToAscii(parts[2]);
