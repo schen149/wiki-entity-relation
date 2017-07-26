@@ -81,16 +81,6 @@ public class FrequencyMapLinker {
 
     /**
      * Get the number of appearences of a string
-     * @param name name of the string
-     */
-    public int getFrequency(String name) {
-        name = DataTypeUtil.normalizeString(name);
-        Integer id = idLinker.getIDFromString(name);
-        return this.getFrequency(id);
-    }
-
-    /**
-     * Get the number of appearences of a string
      * @param id id of the string
      */
     public int getFrequency(Integer id) {
