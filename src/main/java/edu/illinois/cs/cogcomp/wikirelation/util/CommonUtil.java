@@ -1,5 +1,9 @@
 package edu.illinois.cs.cogcomp.wikirelation.util;
 
+import edu.illinois.cs.cogcomp.thrift.curator.Record;
+import org.apache.thrift.TDeserializer;
+import org.apache.thrift.TException;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -18,11 +22,18 @@ public class CommonUtil {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
                 poolSize, // Core count
                 poolSize, // Pool Max
-                60, TimeUnit.SECONDS, // Thread keep alive time
+                15, TimeUnit.SECONDS, // Thread keep alive time
                 new ArrayBlockingQueue<Runnable>(poolSize),// Queue
                 new ThreadPoolExecutor.CallerRunsPolicy()// Blocking mechanism
         );
         executor.allowCoreThreadTimeOut(true);
         return executor;
+    }
+
+    public static Record deserializeRecordFromBytes(byte[] bytes) throws TException {
+        Record rec = new Record();
+        TDeserializer td = new TDeserializer();
+        td.deserialize(rec, bytes);
+        return rec;
     }
 }

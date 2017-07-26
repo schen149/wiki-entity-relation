@@ -6,3 +6,5 @@
 *.settings
 **/.project
 **/.classpath
+data/allCountries.txt
+data/mapdb/string2id
