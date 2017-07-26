@@ -21,7 +21,11 @@ public class FrequencyMapLinker {
 
     public FrequencyMapLinker(boolean bReadOnly, String mapdbDir) {
         this.bReadOnly = bReadOnly;
-        //this.idLinker = new StringIDLinker(true, mapdbDir);
+
+        if (bReadOnly)
+            this.idLinker = new StringIDLinker(true, mapdbDir);
+        else
+            this.idLinker = null;
 
         loadDB(mapdbDir);
     }
