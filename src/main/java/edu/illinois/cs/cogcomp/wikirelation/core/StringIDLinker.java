@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 /**
- * Mapping from String (and alternative forms) to a uniform id
+ * Mapping from String (and alternative forms) to a unique id
  */
 public class StringIDLinker {
 

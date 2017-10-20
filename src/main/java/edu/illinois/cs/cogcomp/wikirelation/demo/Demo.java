@@ -16,13 +16,15 @@ public class Demo {
             System.err.println("[Number-of-entities]:\t Top k related entities");
         }
 
+        String configFilePath = args[0];
+        String pageTitlesInputFilePath = args[1];
         int k = Integer.parseInt(args[2]);
 
-        CooccuranceMapLinker linker = new CooccuranceMapLinker(true, args[0]);
+        CooccuranceMapLinker linker = new CooccuranceMapLinker(true,configFilePath);
 
         try {
             List<String> titles = new ArrayList<>();
-            BufferedReader br = new BufferedReader(new FileReader(args[1]));
+            BufferedReader br = new BufferedReader(new FileReader(pageTitlesInputFilePath));
             String line;
             while ((line = br.readLine()) != null)
                 titles.add(line.trim());
