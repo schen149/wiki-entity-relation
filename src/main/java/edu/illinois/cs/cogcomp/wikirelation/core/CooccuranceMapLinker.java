@@ -93,12 +93,19 @@ public class CooccuranceMapLinker {
         __put(pageId2, pageId1, count);
     }
 
+    public void put(Long key, int count) {
+        if (coocuranceCount.containsKey(key))
+            coocuranceCount.put(key, coocuranceCount.get(key) + count);
+        else
+            coocuranceCount.put(key, count);
+    }
+
     private void __put(int pageId1, int pageId2, int count) {
         long key = DataTypeUtil.concatTwoIntToLong(pageId1, pageId2);
         if (coocuranceCount.containsKey(key))
             coocuranceCount.put(key, coocuranceCount.get(key) + count);
         else
-            coocuranceCount.put(key, 1);
+            coocuranceCount.put(key, count);
     }
 
     public void closeDB() {
