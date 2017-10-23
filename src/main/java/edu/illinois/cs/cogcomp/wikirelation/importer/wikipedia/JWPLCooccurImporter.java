@@ -15,6 +15,9 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Import wikipedia Page title to ID map from JWPL
  */
@@ -26,16 +29,11 @@ public class JWPLCooccurImporter {
     private int processed, dumped;
     private String configFile;
 
-    private DB memDB;
-    private BTreeMap<Long, Integer> memCount;
+    private Map<Long, Integer> memCount;
 
     public JWPLCooccurImporter(String configFile) {
 
-        memDB = DBMaker.memoryDB().closeOnJvmShutdown().make();
-        memCount = memDB.treeMap("coocurance-treemap")
-                .keySerializer(Serializer.LONG)
-                .valueSerializer(Serializer.INTEGER)
-                .open();
+        memCount = new HashMap<>();
 
         DatabaseConfiguration dbConfig = new DatabaseConfiguration();
         dbConfig.setHost("localhost");
