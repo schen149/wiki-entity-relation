@@ -10,6 +10,9 @@ import de.tudarmstadt.ukp.wikipedia.api.exception.WikiInitializationException;
 import edu.illinois.cs.cogcomp.wikirelation.core.CooccuranceMapLinker;
 import edu.illinois.cs.cogcomp.wikirelation.core.PageIDLinker;
 import edu.illinois.cs.cogcomp.wikirelation.util.DataTypeUtil;
+import org.eclipse.collections.api.map.primitive.LongIntMap;
+import org.eclipse.collections.api.map.primitive.MutableLongIntMap;
+import org.eclipse.collections.impl.map.mutable.primitive.LongIntHashMap;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -29,11 +32,11 @@ public class JWPLCooccurImporter {
     private int processed, dumped;
     private String configFile;
 
-    private Map<Long, Integer> memCount;
+    private MutableLongIntMap memCount;
 
     public JWPLCooccurImporter(String configFile) {
 
-        memCount = new HashMap<>();
+        memCount = new LongIntHashMap();
 
         DatabaseConfiguration dbConfig = new DatabaseConfiguration();
         dbConfig.setHost("localhost");
@@ -43,10 +46,11 @@ public class JWPLCooccurImporter {
         dbConfig.setLanguage(WikiConstants.Language.english);
         try {
             wiki = new Wikipedia(dbConfig);
-        } catch (WikiInitializationException e) {
+//            System.out.println(wiki.getPage("Alex_Smith_(tight_end)").getInlinkIDs().size());
+//            System.out.println(wiki.getPage("Alex_Smith_(tight_end)").getOutlinkIDs().size());
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
 
         this.processed = 0;
         this.dumped = 0;
@@ -58,11 +62,11 @@ public class JWPLCooccurImporter {
         Iterable<Integer> it = wiki.getPageIds();
         it.forEach(this::updateMap);
 
-        memCount.forEach((key, value) -> {
+        memCount.forEachKeyValue((key, value) -> {
             cooccur.put(key, value);
             dumped++;
 
-            if (dumped % 500 == 0) {
+            if (dumped % 2048 == 0) {
                 System.out.println("Dumped: " + dumped);
             }
         });
@@ -78,7 +82,7 @@ public class JWPLCooccurImporter {
 
             if (page.isDisambiguation() || page.isRedirect()) return;
 
-            for (Integer id2 : page.getInlinkIDs()) {
+            for (Integer id2 : page.getOutlinkIDs()) {
                 if (id2 == null) continue;
 
                 memPut(pageId, id2);
@@ -90,20 +94,37 @@ public class JWPLCooccurImporter {
 
         processed++;
 
-        if (processed % 500 == 0) {
+        if (processed % 1024 == 0) {
             System.out.println("Processed: " + processed);
+
+            if (processed % 8192 == 0) {
+                System.out.println("MemCount size: " + memCount.size());
+
+                if (memCount.size() > 100000000) {
+                    memCount.forEachKeyValue((key, value) -> {
+                        cooccur.put(key, value);
+                        dumped++;
+
+                        if (dumped % 2048 == 0) {
+                            System.out.println("Dumped: " + dumped);
+                        }
+                    });
+
+                    memCount.clear();
+                }
+            }
+
         }
 
     }
 
     private void memPut(int id1, int id2) {
-        Long key = DataTypeUtil.concatTwoIntToLong(id1, id2);
-        if (memCount.containsKey(key)) {
-            memCount.put(key, memCount.get(key) + 1);
-        }
-        else
-            memCount.put(key, 1);
+        Long key1 = DataTypeUtil.concatTwoIntToLong(id1, id2);
+        Long key2 = DataTypeUtil.concatTwoIntToLong(id2, id1);
+        memCount.addToValue(key1, 1);
+        memCount.addToValue(key2, 1);
     }
+
     public void closeDB() {
         if (this.cooccur != null) {
             cooccur.closeDB();

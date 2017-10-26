@@ -16,7 +16,7 @@ public class DemoPageIDLinker {
         System.out.println("Getting page title with curID = 290: \t" + title);
 
         /* Get page id given the title of the page */
-        Integer id = linker.getIDFromTitle("Neurodevelopmental_disorder");
-        System.out.println("Getting page id with title = \"Neurodevelopmental_disorder\": \t"+id);
+        Integer id = linker.getIDFromTitle("Stanford_University");
+        System.out.println("Getting page id with title = \"Stanford_University\": \t"+id);
     }
 }

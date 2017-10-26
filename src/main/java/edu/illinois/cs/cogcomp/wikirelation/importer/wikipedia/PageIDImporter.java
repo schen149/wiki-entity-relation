@@ -32,7 +32,7 @@ public class PageIDImporter {
         }
 
         this.configFile = configFile;
-        this.titleMap = new PageIDLinker(false, configFile);
+//        this.titleMap = new PageIDLinker(false, configFile);
     }
 
     public void parse() {
@@ -64,7 +64,13 @@ public class PageIDImporter {
         }
 
         PageIDImporter importer = new PageIDImporter(args[0]);
-        importer.parse();
-        importer.closeDB();
+        try {
+            System.out.println(importer.wiki.getPage("Alex_Smith_(tight_end)").getOutlinkIDs());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+//        importer.parse();
+//        importer.closeDB();
     }
 }
