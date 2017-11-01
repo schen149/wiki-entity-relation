@@ -16,7 +16,7 @@ public class Configurator {
 
     /* mapdb path */
     public static String PAGE_ID_MAPDB_PATH;
-    public static String COOCCURANCE_MAPDB_PATH;
+    public static String COOCCURRENCE_MAPDB_PATH;
     public static String ENTITY_COUNT_MAPDB_PATH;
 
     public static void setPropValues(String configFile) throws IOException {
@@ -38,19 +38,19 @@ public class Configurator {
                 case "enwiki-170601":
                     logger.info("Target KB is set to 'enwiki-170601'");
                     PAGE_ID_MAPDB_PATH = rm.getString("enwiki_20170601_pageid_mapdb");
-                    COOCCURANCE_MAPDB_PATH = rm.getString("enwiki_20170601_cooccur_mapdb");
+                    COOCCURRENCE_MAPDB_PATH = rm.getString("enwiki_20170601_cooccur_mapdb");
                     ENTITY_COUNT_MAPDB_PATH = rm.getString("enwiki_20170601_entity_count_mapdb");
                     break;
                 case "gigaword":
                     logger.info("Target KB is set to 'Gigaword'");
                     PAGE_ID_MAPDB_PATH = rm.getString("enwiki_20170601_pageid_mapdb");
-                    COOCCURANCE_MAPDB_PATH = rm.getString("gigaword_cooccur_mapdb");
+                    COOCCURRENCE_MAPDB_PATH = rm.getString("gigaword_cooccur_mapdb");
                     ENTITY_COUNT_MAPDB_PATH = rm.getString("enwiki_20170601_entity_count_mapdb");
                     break;
                 default:
                     logger.info("Target KB is set to default 'gigaword'");
                     PAGE_ID_MAPDB_PATH = rm.getString("enwiki_20170601_pageid_mapdb");
-                    COOCCURANCE_MAPDB_PATH = rm.getString("gigaword_cooccur_mapdb");
+                    COOCCURRENCE_MAPDB_PATH = rm.getString("gigaword_cooccur_mapdb");
                     ENTITY_COUNT_MAPDB_PATH = rm.getString("enwiki_20170601_entity_count_mapdb");
                     break;
             }

@@ -54,7 +54,7 @@ public class CooccurrenceMapLinker {
 
     private void loadDB(){
 
-        String dbfile = Configurator.COOCCURANCE_MAPDB_PATH;
+        String dbfile = Configurator.COOCCURRENCE_MAPDB_PATH;
 
         if (bReadOnly) {
             db = DBMaker.fileDB(dbfile)
