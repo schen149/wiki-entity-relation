@@ -7,7 +7,6 @@ import org.mapdb.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,21 +23,21 @@ import java.util.stream.Collectors;
  * Theoretical space needed: ~70M * (8B + 4B) * 2 / 0.75 = 2.24 GB (Assume perfect primitive map)
  * Actual Space of output: ~2.7GB (800M with non-NE links filtered out)
  */
-public class CooccuranceMapLinker {
+public class CooccurrenceMapLinker {
 
-    private static Logger logger = LoggerFactory.getLogger(CooccuranceMapLinker.class);
+    private static Logger logger = LoggerFactory.getLogger(CooccurrenceMapLinker.class);
 
     private DB db;
     private PageIDLinker idLinker;
-    private BTreeMap<Long, Integer> coocuranceCount;
+    private BTreeMap<Long, Integer> cooccurrenceCount;
 
     private boolean bReadOnly;
     private static String defaultConfigFile = "config/cogcomp-english-170601.properties";
 
-    public CooccuranceMapLinker(boolean bReadOnly) {
+    public CooccurrenceMapLinker(boolean bReadOnly) {
         this(bReadOnly, defaultConfigFile);
     }
-    public CooccuranceMapLinker(boolean bReadOnly, String configFile) {
+    public CooccurrenceMapLinker(boolean bReadOnly, String configFile) {
         this.bReadOnly = bReadOnly;
         this.idLinker = new PageIDLinker(true, configFile);
 
@@ -63,7 +62,7 @@ public class CooccuranceMapLinker {
                     .closeOnJvmShutdown()
                     .readOnly()
                     .make();
-            coocuranceCount = db.treeMap("coocurance-treemap")
+            cooccurrenceCount = db.treeMap("cooccurrence-treemap")
                     .keySerializer(Serializer.LONG)
                     .valueSerializer(Serializer.INTEGER)
                     .open();
@@ -72,7 +71,7 @@ public class CooccuranceMapLinker {
             db = DBMaker.fileDB(dbfile)
                     .closeOnJvmShutdown()
                     .make();
-            coocuranceCount = db.treeMap("coocurance-treemap")
+            cooccurrenceCount = db.treeMap("cooccurrence-treemap")
                     .keySerializer(Serializer.LONG)
                     .valueSerializer(Serializer.INTEGER)
                     .create();
@@ -94,18 +93,18 @@ public class CooccuranceMapLinker {
     }
 
     public void put(Long key, int count) {
-        if (coocuranceCount.containsKey(key))
-            coocuranceCount.put(key, coocuranceCount.get(key) + count);
+        if (cooccurrenceCount.containsKey(key))
+            cooccurrenceCount.put(key, cooccurrenceCount.get(key) + count);
         else
-            coocuranceCount.put(key, count);
+            cooccurrenceCount.put(key, count);
     }
 
     private void __put(int pageId1, int pageId2, int count) {
         long key = DataTypeUtil.concatTwoIntToLong(pageId1, pageId2);
-        if (coocuranceCount.containsKey(key))
-            coocuranceCount.put(key, coocuranceCount.get(key) + count);
+        if (cooccurrenceCount.containsKey(key))
+            cooccurrenceCount.put(key, cooccurrenceCount.get(key) + count);
         else
-            coocuranceCount.put(key, count);
+            cooccurrenceCount.put(key, count);
     }
 
     public void closeDB() {
@@ -128,7 +127,7 @@ public class CooccuranceMapLinker {
         long lowerBound = DataTypeUtil.concatTwoIntToLong(pageId, 0);
 
         // Co-occurance count of the given pageId
-        Map<Long, Integer> count = this.coocuranceCount.subMap(lowerBound, upperBound);
+        Map<Long, Integer> count = this.cooccurrenceCount.subMap(lowerBound, upperBound);
         List<Map.Entry<Long, Integer>> sortedCount = new ArrayList<>(count.entrySet());
         sortedCount.sort((e1,e2) -> e2.getValue() - e1.getValue());
 
@@ -209,7 +208,7 @@ public class CooccuranceMapLinker {
             long upperBound = DataTypeUtil.concatTwoIntToLong(pageId + 1, 0);
             long lowerBound = DataTypeUtil.concatTwoIntToLong(pageId, 0);
 
-            Map<Long, Integer> count = coocuranceCount.subMap(lowerBound, upperBound);
+            Map<Long, Integer> count = cooccurrenceCount.subMap(lowerBound, upperBound);
 
             for (Map.Entry<Long, Integer> curCand : count.entrySet()) {
                 int candId = DataTypeUtil.getLower32bitFromLong(curCand.getKey());

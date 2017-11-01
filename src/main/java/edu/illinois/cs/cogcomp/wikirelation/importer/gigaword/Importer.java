@@ -3,7 +3,7 @@ package edu.illinois.cs.cogcomp.wikirelation.importer.gigaword;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.thrift.base.Span;
 import edu.illinois.cs.cogcomp.thrift.curator.Record;
-import edu.illinois.cs.cogcomp.wikirelation.core.CooccuranceMapLinker;
+import edu.illinois.cs.cogcomp.wikirelation.core.CooccurrenceMapLinker;
 import edu.illinois.cs.cogcomp.wikirelation.core.PageIDLinker;
 import edu.illinois.cs.cogcomp.wikirelation.util.WikiUtil;
 import org.apache.commons.io.IOUtils;
@@ -24,7 +24,7 @@ public class Importer {
     private File recordDir;
     private String configFile, indexFile;
     private PageIDLinker idLinker;
-    private final CooccuranceMapLinker coourranceMap;
+    private final CooccurrenceMapLinker coourranceMap;
     private List<String> processed;
 
     public Importer(String recordDirPath, String configFile, String indexFile) throws FileNotFoundException {
@@ -38,7 +38,7 @@ public class Importer {
         this.configFile = configFile;
         this.indexFile = indexFile;
         this.idLinker = new PageIDLinker(true, configFile);
-        this.coourranceMap = new CooccuranceMapLinker(false, configFile);
+        this.coourranceMap = new CooccurrenceMapLinker(false, configFile);
 
         /* Attach shutdown hook */
         Runtime.getRuntime().addShutdownHook(new Thread() {

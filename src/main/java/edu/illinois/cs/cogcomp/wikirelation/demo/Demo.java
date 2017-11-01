@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.wikirelation.demo;
 
-import edu.illinois.cs.cogcomp.wikirelation.core.CooccuranceMapLinker;
+import edu.illinois.cs.cogcomp.wikirelation.core.CooccurrenceMapLinker;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -20,7 +20,7 @@ public class Demo {
         String pageTitlesInputFilePath = args[1];
         int k = Integer.parseInt(args[2]);
 
-        CooccuranceMapLinker linker = new CooccuranceMapLinker(true,configFilePath);
+        CooccurrenceMapLinker linker = new CooccurrenceMapLinker(true,configFilePath);
 
         try {
             List<String> titles = new ArrayList<>();

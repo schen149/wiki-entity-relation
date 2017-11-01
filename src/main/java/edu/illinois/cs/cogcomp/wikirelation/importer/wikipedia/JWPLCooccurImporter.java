@@ -1,25 +1,14 @@
 package edu.illinois.cs.cogcomp.wikirelation.importer.wikipedia;
 
-import com.sun.prism.PixelFormat;
 import de.tudarmstadt.ukp.wikipedia.api.DatabaseConfiguration;
 import de.tudarmstadt.ukp.wikipedia.api.Page;
 import de.tudarmstadt.ukp.wikipedia.api.WikiConstants;
 import de.tudarmstadt.ukp.wikipedia.api.Wikipedia;
 import de.tudarmstadt.ukp.wikipedia.api.exception.WikiApiException;
-import de.tudarmstadt.ukp.wikipedia.api.exception.WikiInitializationException;
-import edu.illinois.cs.cogcomp.wikirelation.core.CooccuranceMapLinker;
-import edu.illinois.cs.cogcomp.wikirelation.core.PageIDLinker;
+import edu.illinois.cs.cogcomp.wikirelation.core.CooccurrenceMapLinker;
 import edu.illinois.cs.cogcomp.wikirelation.util.DataTypeUtil;
-import org.eclipse.collections.api.map.primitive.LongIntMap;
 import org.eclipse.collections.api.map.primitive.MutableLongIntMap;
 import org.eclipse.collections.impl.map.mutable.primitive.LongIntHashMap;
-import org.mapdb.BTreeMap;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
-import org.mapdb.Serializer;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Import wikipedia Page title to ID map from JWPL
@@ -27,7 +16,7 @@ import java.util.Map;
 public class JWPLCooccurImporter {
 
     public static Wikipedia wiki = null;
-    public CooccuranceMapLinker cooccur;
+    public CooccurrenceMapLinker cooccur;
 
     private int processed, dumped;
     private String configFile;
@@ -55,7 +44,7 @@ public class JWPLCooccurImporter {
         this.processed = 0;
         this.dumped = 0;
         this.configFile = configFile;
-        this.cooccur = new CooccuranceMapLinker(false, configFile);
+        this.cooccur = new CooccurrenceMapLinker(false, configFile);
     }
 
     public void parse() {

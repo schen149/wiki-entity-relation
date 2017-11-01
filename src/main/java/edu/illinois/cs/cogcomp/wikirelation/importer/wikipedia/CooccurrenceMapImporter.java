@@ -7,7 +7,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.SpanLabelView;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.wiki.parsing.MLWikiDumpFilter;
 import edu.illinois.cs.cogcomp.wiki.parsing.processors.PageMeta;
-import edu.illinois.cs.cogcomp.wikirelation.core.CooccuranceMapLinker;
+import edu.illinois.cs.cogcomp.wikirelation.core.CooccurrenceMapLinker;
 import edu.illinois.cs.cogcomp.wikirelation.core.PageIDLinker;
 import edu.illinois.cs.cogcomp.wikirelation.util.WikiUtil;
 import info.bliki.wiki.dump.WikiArticle;
@@ -23,18 +23,18 @@ import java.util.stream.Collectors;
 /**
  * Some calculation
  */
-public class CooccuranceMapImporter {
-    private static Logger logger = LoggerFactory.getLogger(CooccuranceMapImporter.class);
+public class CooccurrenceMapImporter {
+    private static Logger logger = LoggerFactory.getLogger(CooccurrenceMapImporter.class);
 
     private String dumpdir;
     private String date;
     private String language;
     private String dumpfile, cooccurfile, configfile;
 
-    private CooccuranceMapLinker relation;
+    private CooccurrenceMapLinker relation;
     private PageIDLinker idLinker;
 
-    public CooccuranceMapImporter(String dumpDir, String date, String language, String configfile) {
+    public CooccurrenceMapImporter(String dumpDir, String date, String language, String configfile) {
         this.dumpdir = dumpDir;
         this.date = date;
         this.language = language;
@@ -97,7 +97,7 @@ public class CooccuranceMapImporter {
     private void populateDB() throws IOException{
         logger.info("Populating mapdb...");
 
-        this.relation = new CooccuranceMapLinker(false, this.configfile);
+        this.relation = new CooccurrenceMapLinker(false, this.configfile);
 
         BufferedReader br = new BufferedReader(new FileReader(cooccurfile));
         String line;
@@ -146,7 +146,7 @@ public class CooccuranceMapImporter {
     }
 
     public static void main(String args[]) {
-        CooccuranceMapImporter rmg = new CooccuranceMapImporter("/media/evo/data/wiki/enwiki-20170601/",
+        CooccurrenceMapImporter rmg = new CooccurrenceMapImporter("/media/evo/data/wiki/enwiki-20170601/",
                 "20170601", "en", "/home/squirrel/project/wiki-entity-relation/config/sihaopc-tmp.properties");
 
         try{
