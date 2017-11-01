@@ -11,7 +11,6 @@ public class Configurator {
     private static boolean bIsLoaded = false;
     private static String loadedConfigFile = "";
 
-    /* Choose which source of co-occurance map to use */
     public static String SOURCE;
 
     /* mapdb path */
@@ -48,7 +47,7 @@ public class Configurator {
                     ENTITY_COUNT_MAPDB_PATH = rm.getString("enwiki_20170601_entity_count_mapdb");
                     break;
                 default:
-                    logger.info("Target KB is set to default 'gigaword'");
+                    logger.info("Target KB is set to default option 'gigaword'");
                     PAGE_ID_MAPDB_PATH = rm.getString("enwiki_20170601_pageid_mapdb");
                     COOCCURRENCE_MAPDB_PATH = rm.getString("gigaword_cooccur_mapdb");
                     ENTITY_COUNT_MAPDB_PATH = rm.getString("enwiki_20170601_entity_count_mapdb");

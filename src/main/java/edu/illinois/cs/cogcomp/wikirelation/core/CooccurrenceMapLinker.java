@@ -12,12 +12,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Use Co-occurance metric to measure & cache related wikipedia titles
+ * Use Cooccurrence metric to measure & cache related wikipedia titles
  *
- * Because there are ~78M co-occurances for 5M pages in current enwiki dump,
+ * Because there are ~78M cooccurrence for 5M pages in current enwiki dump,
  * we need to choose the right datastructure to store the frequency map for max performance.
  * The way I did it is building a treemap by connecting the two (integer) page ids into a single
- * long as key and their co-occurance frequency as value. By using primitive types as key and values
+ * long as key and their cooccurrence frequency as value. By using primitive types as key and values
  * we can save at least 4B for each entry (Object head length).
  *
  * Theoretical space needed: ~70M * (8B + 4B) * 2 / 0.75 = 2.24 GB (Assume perfect primitive map)
